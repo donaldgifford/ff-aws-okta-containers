@@ -142,9 +142,12 @@ temporary profile:
 - While the extension's DevTools toolbox is open, Firefox does not stop the
   background script when idle. The idle wake-up test in phase 2 has to be
   run with the toolbox closed.
-- Still to confirm by hand: the normal-window click-through in a visible
-  Firefox, and whether the button is absent from private windows when the
-  extension is not allowed there.
+- Normal window, same profile: the first button click logged
+  `created container` and opened the tab in it; the second logged
+  `reusing container` with the same `cookieStoreId` and opened a second tab
+  there.
+- Not checked: whether the button is absent from private windows when the
+  extension is not allowed there. This does not affect the design.
 
 <!--docz:criteria:start-->
 #### Success Criteria
