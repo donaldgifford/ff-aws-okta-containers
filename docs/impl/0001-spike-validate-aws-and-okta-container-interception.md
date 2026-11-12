@@ -114,7 +114,7 @@ also settles the platform questions that do not need AWS or Okta.
 - [x] Implement get-or-create of a container by name and opening a URL in it.
 - [x] Load the extension in a fresh Firefox profile and record whether the
       `contextualIdentities` permission alone turns containers on.
-- [ ] Record what happens when a tab is opened with a container from a
+- [x] Record what happens when a tab is opened with a container from a
       private window.
 - [x] Add `web-ext` to `mise.toml` and confirm `web-ext lint` and
       `web-ext run` work against `spike/`.
@@ -135,8 +135,16 @@ temporary profile:
   store.
 - Opening a container tab also needs the `cookies` permission.
 - The local-capture path is `.local/`, ignored in `.gitignore`.
-- Still to do by hand: the private-window check, and clicking the toolbar
-  button in a visible Firefox (`just spike-run`).
+- Private window, with the extension allowed to run there (normal Firefox
+  profile, loaded from `about:debugging`): the button click reached the
+  background script and it declined to route, logging
+  `private window: not routing`. No tab was opened.
+- While the extension's DevTools toolbox is open, Firefox does not stop the
+  background script when idle. The idle wake-up test in phase 2 has to be
+  run with the toolbox closed.
+- Still to confirm by hand: the normal-window click-through in a visible
+  Firefox, and whether the button is absent from private windows when the
+  extension is not allowed there.
 
 <!--docz:criteria:start-->
 #### Success Criteria
