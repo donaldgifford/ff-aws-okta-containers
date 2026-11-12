@@ -34,6 +34,10 @@ actionlint = "latest"
 shellcheck = "latest"
 shfmt = "latest"
 
+# Extension tooling
+# renovate: datasource=npm depName=web-ext
+"npm:web-ext" = "10.8.0"
+
 # Security
 # renovate: datasource=github-releases depName=trufflesecurity/trufflehog
 trufflehog = "3.96.0"
