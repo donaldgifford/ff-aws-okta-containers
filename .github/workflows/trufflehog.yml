@@ -1,0 +1,44 @@
+---
+# yaml-language-server: $schema=https://www.schemastore.org/github-workflow.json
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Install trufflehog
+        uses: jdx/mise-action@v4
+        with:
+          install_args: trufflehog
+      # Same scan range as the trufflehog action: PRs scan base..head, pushes
+      # before..after, anything else the full history. Context values arrive
+      # via env, not inline ${{ }}, so nothing event-controlled is interpolated
+      # into bash.
+      - name: TruffleHog OSS
+        env:
+          EVENT: ${{ github.event_name }}
+          PR_BASE: ${{ github.event.pull_request.base.sha }}
+          PR_HEAD: ${{ github.event.pull_request.head.sha }}
+          PUSH_BEFORE: ${{ github.event.before }}
+          PUSH_AFTER: ${{ github.event.after }}
+        run: |
+          base="" head=""
+          case "$EVENT" in
+            pull_request) base="$PR_BASE" head="$PR_HEAD" ;;
+            push)
+              head="$PUSH_AFTER"
+              [ "$PUSH_BEFORE" != "0000000000000000000000000000000000000000" ] && base="$PUSH_BEFORE"
+              ;;
+          esac
+          args=(git "file://$PWD" --fail --no-update --github-actions "--results=verified,unknown")
+          [ -n "$base" ] && args+=(--since-commit "$base")
+          [ -n "$head" ] && args+=(--branch "$head")
+          trufflehog "${args[@]}"

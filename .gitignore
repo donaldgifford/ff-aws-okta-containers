@@ -1,0 +1,45 @@
+# Dependencies and build output
+node_modules/
+dist/
+build/
+web-ext-artifacts/
+*.xpi
+*.zip
+
+# Local captures and notes from manual testing. These can contain real
+# account IDs, tenant names and tokens and must never be committed.
+.local/
+*.har
+
+# Signing credentials for web-ext
+.web-ext-config.*
+.amo-*
+
+# Local Claude Code state
+.claude/
+
+# IDE
+.vscode/
+.idea/
+
+# Local env
+.env
+.env.*
+
+# Keys and certs
+*.pem
+*.cert
+*.key
+id_rsa*
+id_ecdsa*
+id_ed25519*
+
+# Generated changelog used by the drift check
+CHANGELOG.generated.md
+
+# mkdocs build output
+site/
+
+# OS files
+.DS_Store
+Thumbs.db

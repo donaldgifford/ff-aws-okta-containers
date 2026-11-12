@@ -1,0 +1,46 @@
+---
+# yaml-language-server: $schema=https://www.schemastore.org/pull-request-labeler.json
+# labels.sh creates any labels listed here that don't exist yet.
+extension:
+  - changed-files:
+      - any-glob-to-any-file: extension/**
+      - any-glob-to-any-file: spike/**
+
+dependencies:
+  - changed-files:
+      - any-glob-to-any-file: mise.toml
+      - any-glob-to-any-file: renovate.json5
+      - any-glob-to-any-file: package.json
+      - any-glob-to-any-file: package-lock.json
+
+# Add 'Documentation' label to any changes within 'docs' folder or any subfolders
+documentation:
+  - changed-files:
+      - any-glob-to-any-file: docs/**
+      - any-glob-to-any-file: README.md
+      - any-glob-to-any-file: .docz.yaml
+
+ci:
+  - changed-files:
+      - any-glob-to-any-file: .github/**
+      - any-glob-to-any-file: justfile
+
+repo:
+  - changed-files:
+      - any-glob-to-any-file: .markdownlint.yaml
+      - any-glob-to-any-file: .prettierrc.yaml
+      - any-glob-to-any-file: .yamlfmt.yml
+      - any-glob-to-any-file: .yamllint.yml
+      - any-glob-to-any-file: scripts/**.sh
+
+# Add 'feature' label to any PR where the head branch name starts with `feature` or has a `feature` section in the name
+feature:
+  - head-branch: ["^feature", "feature"]
+fix:
+  - head-branch: ["^fix", "fix"]
+chore:
+  - head-branch: ["^chore", "chore"]
+docs:
+  - head-branch: ["^docs", "docs"]
+security:
+  - head-branch: ["^security", "security"]

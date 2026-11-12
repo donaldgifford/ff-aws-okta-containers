@@ -27,6 +27,10 @@ created: 2026-11-12
   - [Unverified items](#unverified-items)
 - [Conclusion](#conclusion)
 - [Recommendation](#recommendation)
+  - [Proposed shape](#proposed-shape)
+  - [Decisions](#decisions)
+  - [Still open](#still-open)
+  - [Next steps](#next-steps)
 - [References](#references)
 <!-- markdownlint-restore -->
 <!--toc:end-->
@@ -364,7 +368,7 @@ one.
 Write a new extension that we own and maintain. Do not fork, and do not copy
 code from existing extensions.
 
-**Proposed shape**
+### Proposed shape
 
 - Firefox only, Manifest V3, TypeScript, no runtime dependencies, bundled with
   esbuild and packaged with `web-ext`.
@@ -391,7 +395,9 @@ code from existing extensions.
   back to a stable hash of the key so a container keeps its colour.
 - **Distribution:** releases signed by Mozilla (decision 5).
 
-**Decisions** (agreed 2026-11-12)
+### Decisions
+
+Agreed 2026-11-12.
 
 1. **Okta: one admin container per tenant, and nothing else.** Only
    `<org>-admin` hosts trigger routing. The admin console is the reason this
@@ -416,6 +422,14 @@ code from existing extensions.
    tenant has a label, defaulting to the portal subdomain or the Okta org
    name, editable in the options page.
 
+5. **Signed releases through Mozilla, listed in the add-ons directory once
+   stable.** The source is already public, so a listing exposes nothing new,
+   and a listed add-on gets automatic updates without us hosting an update
+   feed. Until the first stable release, builds are loaded from
+   `about:debugging` or signed on the unlisted channel, so nothing
+   half-finished is published and there is no review wait. A listing does
+   mean submitting source alongside the bundled build for review.
+
 Resulting containers:
 
 | Kind | Key | Default name |
@@ -432,14 +446,6 @@ Resulting routing rule, the same for portal hosts and Okta admin hosts:
 | No container, POST | Leave alone |
 | Any container | Leave alone |
 
-5. **Signed releases through Mozilla, listed in the add-ons directory once
-   stable.** The source is already public, so a listing exposes nothing new,
-   and a listed add-on gets automatic updates without us hosting an update
-   feed. Until the first stable release, builds are loaded from
-   `about:debugging` or signed on the unlisted channel, so nothing
-   half-finished is published and there is no review wait. A listing does
-   mean submitting source alongside the bundled build for review.
-
 Two accepted consequences of decisions 1 to 3:
 
 - A portal launched from an Okta dashboard tile in an ordinary tab moves into
@@ -451,7 +457,7 @@ Two accepted consequences of decisions 1 to 3:
   admin console to the dashboard and clicking the tile) stays in that admin
   container, because tabs already in a container are never moved.
 
-**Still open**
+### Still open
 
 These do not block a design. The first version will take the stated default
 unless decided otherwise.
@@ -465,7 +471,7 @@ unless decided otherwise.
    `aws-sso-cli`) can open a console in the right container. Not in the
    first version.
 
-**Next steps**
+### Next steps
 
 1. Create the public GitHub repository and push this investigation. Before
    the first commit, check that nothing in the tree names an employer,
