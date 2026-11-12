@@ -298,6 +298,6 @@ The spike is tested by hand; each phase's tasks are the test steps.
 <!--docz:references:start-->
 ## References
 
-- INV-0001: Firefox extension for automatic AWS SSO and Okta containers
+- [INV-0001: Firefox extension for automatic AWS SSO and Okta containers](../investigation/0001-firefox-extension-for-automatic-aws-sso-and-okta-containers.md)
 
 <!--docz:references:end-->
