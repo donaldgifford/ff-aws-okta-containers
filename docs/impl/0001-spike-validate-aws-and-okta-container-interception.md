@@ -1,7 +1,7 @@
 ---
 id: IMPL-0001
 title: "Spike: validate AWS and Okta container interception"
-status: Draft
+status: In Progress
 author: Donald Gifford
 created: 2026-11-12
 ---
@@ -21,6 +21,7 @@ created: 2026-11-12
 - [Implementation Phases](#implementation-phases)
   - [Phase 1: Harness](#phase-1-harness)
     - [Tasks](#tasks)
+    - [Results](#results)
     - [Success Criteria](#success-criteria)
   - [Phase 2: AWS console and portal](#phase-2-aws-console-and-portal)
     - [Tasks](#tasks-1)
@@ -106,19 +107,36 @@ also settles the platform questions that do not need AWS or Okta.
 <!--docz:tasks:start-->
 #### Tasks
 
-- [ ] Add `spike/manifest.json` (Manifest V3, explicit `gecko.id`,
+- [x] Add `spike/manifest.json` (Manifest V3, explicit `gecko.id`,
       `data_collection_permissions` of `none`, non-persistent background
       script) and `spike/background.js`.
-- [ ] Add a git-ignored path for local captures and notes.
-- [ ] Implement get-or-create of a container by name and opening a URL in it.
-- [ ] Load the extension in a fresh Firefox profile and record whether the
+- [x] Add a git-ignored path for local captures and notes.
+- [x] Implement get-or-create of a container by name and opening a URL in it.
+- [x] Load the extension in a fresh Firefox profile and record whether the
       `contextualIdentities` permission alone turns containers on.
 - [ ] Record what happens when a tab is opened with a container from a
       private window.
-- [ ] Add `web-ext` to `mise.toml` and confirm `web-ext lint` and
+- [x] Add `web-ext` to `mise.toml` and confirm `web-ext lint` and
       `web-ext run` work against `spike/`.
 
 <!--docz:tasks:end-->
+
+#### Results
+
+Observed on Firefox 159.0.1 with `web-ext run`, which starts a fresh
+temporary profile:
+
+- The `contextualIdentities` permission alone is enough. Containers were
+  usable immediately, and the fresh profile already had the four default
+  containers (Personal, Work, Banking, Shopping).
+- Creating a container by name and asking for it again returned the same
+  container; only one container with that name existed afterwards.
+- A tab opened with the container's `cookieStoreId` reported that same
+  store.
+- Opening a container tab also needs the `cookies` permission.
+- The local-capture path is `.local/`, ignored in `.gitignore`.
+- Still to do by hand: the private-window check, and clicking the toolbar
+  button in a visible Firefox (`just spike-run`).
 
 <!--docz:criteria:start-->
 #### Success Criteria

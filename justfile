@@ -10,7 +10,7 @@ _default:
 
 # Run every linter
 [group('lint')]
-lint: lint-md lint-yaml lint-actions lint-shell
+lint: lint-md lint-yaml lint-actions lint-shell spike-lint
 
 # Lint Markdown
 [group('lint')]
@@ -38,6 +38,18 @@ fmt:
     @prettier --write "**/*.md" "!CHANGELOG.md"
     @yamlfmt .
     @shfmt -w -i 2 scripts/*.sh
+
+# ─── Spike ──────────────────────────────────────────────────────────
+
+# Lint the spike extension
+[group('spike')]
+spike-lint:
+    @web-ext lint --source-dir spike
+
+# Run the spike extension in a fresh temporary Firefox profile
+[group('spike')]
+spike-run:
+    @web-ext run --source-dir spike
 
 # ─── Docs ───────────────────────────────────────────────────────────
 
