@@ -1,5 +1,7 @@
 [tools]
 
+# Runtimes for npm/pipx-backed tools (prettier, markdownlint-cli2,
+# yamllint).
 # renovate: datasource=node-version depName=node
 node = "24.14.0"
 # renovate: datasource=github-tags depName=python/cpython extractVersion=^v(?<version>.*)$
@@ -7,34 +9,21 @@ python = "3.13.12"
 # renovate: datasource=github-releases depName=astral-sh/uv
 uv = "0.10.11"
 
-# Go
-# renovate: datasource=github-tags depName=golang/go
-go = "1.26.10"
-# renovate: datasource=github-releases depName=segmentio/golines
-golines = "0.13.0"
-# renovate: datasource=go depName=golang.org/x/tools
-"go:golang.org/x/tools/cmd/goimports" = "0.48.0"
-# renovate: datasource=go depName=golang.org/x/tools
-"go:golang.org/x/tools/cmd/godoc" = "latest"
-# renovate: datasource=go depName=spf13/cobra-cli
-"go:github.com/spf13/cobra-cli" = "latest"
-# renovate: datasource=go depName=github.com/vektra/mockery/v3
-"go:github.com/vektra/mockery/v3" = "latest"
-
-# shell
-# shellcheck = "latest"
-shfmt = "latest"
-
 # Repo utilities
 # renovate: datasource=github-releases depName=casey/just
 just = "1.58.0"
+# renovate: datasource=github-releases depName=cli/cli
+gh = "2.102.0"
+# renovate: datasource=github-releases depName=donaldgifford/docz
+"github:donaldgifford/docz" = "2.6.1"
+# renovate: datasource=github-releases depName=orhun/git-cliff
+git-cliff = "latest"
 
 # Formatters and linters
 # renovate: datasource=github-releases depName=DavidAnson/markdownlint-cli2
 markdownlint-cli2 = "0.18.1"
 # renovate: datasource=github-releases depName=google/yamlfmt
 yamlfmt = "0.21.0"
-
 # renovate: datasource=github-tags depName=adrienverge/yamllint
 yamllint = "1.38.0"
 # renovate: datasource=npm depName=prettier
@@ -43,47 +32,8 @@ prettier = "3.9.6"
 actionlint = "latest"
 # renovate: datasource=github-releases depName=koalaman/shellcheck
 shellcheck = "latest"
-
-
-# tools
-# renovate: datasource=github-releases depName=mikefarah/yq
-yq = "4.53.3"
-# renovate: datasource=github-releases depName=jqlang/jq
-jq = "1.8.2"
-# renovate: datasource=github-releases depName=donaldgifford/docz
-"github:donaldgifford/docz" = "2.6.1"
-
-# Release tools
-# renovate: datasource=github-releases depName=golangci/golangci-lint
-golangci-lint = "2.12.2"
-# renovate: datasource=github-releases depName=orhun/git-cliff
-git-cliff = "latest"
+shfmt = "latest"
 
 # Security
 # renovate: datasource=github-releases depName=trufflesecurity/trufflehog
 trufflehog = "3.96.0"
-# renovate: datasource=github-releases depName=sigstore/cosign
-cosign = "2.6.1"
-# renovate: datasource=github-releases depName=cli/cli
-gh = "2.102.0"
-# renovate: datasource=github-releases depName=anchore/syft
-syft = "latest"
-# renovate: datasource=go depName=golang.org/x/vuln
-"go:golang.org/x/vuln/cmd/govulncheck" = "1.6.0"
-# renovate: datasource=github-releases depName=open-policy-agent/conftest
-conftest = "0.69.0"
-# renovate: datasource=github-releases depName=open-policy-agent/opa
-opa = "1.21.4"
-# renovate: datasource=github-releases depName=open-policy-agent/regal
-regal = "0.43.0"
-# renovate: datasource=github-releases depName=aquasecurity/trivy
-trivy = "0.75.0"
-
-# Compliance
-# renovate: datasource=go depName=github.com/google/go-licenses
-"go:github.com/google/go-licenses" = "1.6.0"
-
-
-# ── Infra / IaC ───────────────────────────────────────────────────────────────
-# renovate: datasource=github-releases depName=bazelbuild/bazelisk
-bazelisk = "1.29.0"
