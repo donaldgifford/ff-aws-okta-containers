@@ -6,6 +6,10 @@ this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [unreleased]
 
+### Features
+
+- *(spike)* Add throwaway extension harness for IMPL-0001 phase 1
+
 ### Documentation
 
 - Add INV-0001 for the AWS SSO and Okta containers extension
