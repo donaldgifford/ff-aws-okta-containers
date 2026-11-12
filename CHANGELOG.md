@@ -15,6 +15,8 @@ this project adheres to [Semantic Versioning](https://semver.org/).
 - Add INV-0001 for the AWS SSO and Okta containers extension
 - Add IMPL-0001 spike plan for container interception
 - Link INV-0001 from the spike plan
+- Record the private-window result in IMPL-0001
+- Record the normal-window result in IMPL-0001
 
 ### Miscellaneous Tasks
 
