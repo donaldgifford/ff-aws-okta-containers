@@ -25,9 +25,11 @@ created: 2026-11-12
     - [Success Criteria](#success-criteria)
   - [Phase 2: AWS console and portal](#phase-2-aws-console-and-portal)
     - [Tasks](#tasks-1)
+    - [Results so far](#results-so-far)
     - [Success Criteria](#success-criteria-1)
   - [Phase 3: Okta admin console](#phase-3-okta-admin-console)
     - [Tasks](#tasks-2)
+    - [Results so far](#results-so-far-1)
     - [Success Criteria](#success-criteria-2)
   - [Phase 4: Signing dry run and write-up](#phase-4-signing-dry-run-and-write-up)
     - [Tasks](#tasks-3)
@@ -176,7 +178,7 @@ that a portal can live in its own container.
       page reaches the console afterwards.
 - [ ] Record the portal's hostname form (for example `*.awsapps.com/start`,
       `*.portal.<region>.app.aws`) and the hosts its API calls go to.
-- [ ] Add a blocking listener with `filterResponseData` on the federation
+- [x] Add a blocking listener with `filterResponseData` on the federation
       request. Record which permissions Manifest V3 needs for it, including
       whether `webRequestFilterResponse` is required.
 - [ ] Build the sign-in URL from the response, open it in a container named
@@ -198,6 +200,24 @@ that a portal can live in its own container.
       listener still fires after the script is woken.
 
 <!--docz:tasks:end-->
+
+#### Results so far
+
+Observed headless on Firefox 159.0.1 in a fresh profile, without AWS:
+
+- `webRequest.filterResponseData` under Manifest V3 needs three
+  permissions: `webRequest`, `webRequestBlocking` and
+  `webRequestFilterResponse`. Without the last one the call throws
+  `Missing required "webRequestFilterResponse" permission`. With it, a
+  response body was read and passed through intact.
+- Host permissions declared in `host_permissions` were all granted to a
+  temporarily loaded extension without a prompt.
+- `storage.session` is available, and is used to keep account names across
+  the background script going idle.
+
+The interception code in `spike/background.js` is written from the
+behaviour described in INV-0001 and has not yet been run against a real
+access portal.
 
 <!--docz:criteria:start-->
 #### Success Criteria
@@ -239,6 +259,21 @@ Confirm admin-only routing gives concurrent admin sessions across tenants.
       mapping.
 
 <!--docz:tasks:end-->
+
+#### Results so far
+
+Observed headless on Firefox 159.0.1 in a fresh profile, using a hostname
+for a tenant that does not exist:
+
+- A GET to an `<org>-admin.okta.com` host in a tab with no container was
+  cancelled and reopened in a container named for the tenant, and the empty
+  tab it came from was closed.
+- A GET to the matching `<org>.okta.com` host stayed in its tab with no
+  container.
+
+Still to do against real tenants: the sign-in flow inside the container,
+two tenants signed in at once, and the cause of the sign-out without
+containers.
 
 <!--docz:criteria:start-->
 #### Success Criteria

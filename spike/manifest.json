@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "ff-aws-okta-containers spike",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Throwaway spike for IMPL-0001. Not for general use.",
   "browser_specific_settings": {
     "gecko": {
@@ -20,7 +20,11 @@
   "permissions": [
     "contextualIdentities",
     "cookies",
-    "tabs"
+    "tabs",
+    "storage",
+    "webRequest",
+    "webRequestBlocking",
+    "webRequestFilterResponse"
   ],
   "background": {
     "scripts": [
@@ -29,5 +33,13 @@
   },
   "action": {
     "default_title": "Spike: open example.com in the test container"
-  }
+  },
+  "host_permissions": [
+    "https://*.awsapps.com/*",
+    "https://*.amazonaws.com/*",
+    "https://*.app.aws/*",
+    "https://*.okta.com/*",
+    "https://*.oktapreview.com/*",
+    "https://*.okta-emea.com/*"
+  ]
 }

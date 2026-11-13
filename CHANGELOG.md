@@ -9,6 +9,7 @@ this project adheres to [Semantic Versioning](https://semver.org/).
 ### Features
 
 - *(spike)* Add throwaway extension harness for IMPL-0001 phase 1
+- *(spike)* Add AWS and Okta interception for IMPL-0001 phases 2 and 3
 
 ### Documentation
 
