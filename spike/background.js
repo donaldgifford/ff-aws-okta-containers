@@ -223,16 +223,25 @@ function readResponse(requestId, withhold, onBody) {
 }
 
 function onAccountList(details) {
-  if (details.method !== "GET") return {};
+  // The portal sends this as a POST, preceded by an OPTIONS preflight that
+  // has no body worth reading.
+  if (details.method === "OPTIONS") return {};
   readResponse(details.requestId, false, async (text) => {
     if (!text) return;
     const body = JSON.parse(text);
+    const items = Array.isArray(body.result) ? body.result : [];
     const found = {};
-    for (const item of body.result || []) {
+    for (const item of items) {
       const meta = item.searchMetadata;
       if (meta && meta.AccountId && meta.AccountName) found[meta.AccountId] = meta.AccountName;
     }
-    log("account list: top-level fields", Object.keys(body), "accounts named", Object.keys(found).length);
+    // Field names only, never values.
+    log(
+      "account list: top-level fields", Object.keys(body),
+      "item fields", items[0] ? Object.keys(items[0]) : [],
+      "metadata fields", items[0] && items[0].searchMetadata ? Object.keys(items[0].searchMetadata) : [],
+      "accounts named", Object.keys(found).length,
+    );
     if (Object.keys(found).length > 0) await rememberAccounts(found);
   });
   return {};

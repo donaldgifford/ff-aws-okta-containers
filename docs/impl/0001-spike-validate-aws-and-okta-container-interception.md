@@ -26,10 +26,12 @@ created: 2026-11-12
   - [Phase 2: AWS console and portal](#phase-2-aws-console-and-portal)
     - [Tasks](#tasks-1)
     - [Results so far](#results-so-far)
+    - [Results against a real portal](#results-against-a-real-portal)
     - [Success Criteria](#success-criteria-1)
   - [Phase 3: Okta admin console](#phase-3-okta-admin-console)
     - [Tasks](#tasks-2)
     - [Results so far](#results-so-far-1)
+    - [Results against real tenants](#results-against-real-tenants)
     - [Success Criteria](#success-criteria-2)
   - [Phase 4: Signing dry run and write-up](#phase-4-signing-dry-run-and-write-up)
     - [Tasks](#tasks-3)
@@ -173,15 +175,15 @@ that a portal can live in its own container.
 <!--docz:tasks:start-->
 #### Tasks
 
-- [ ] With the network panel open, click a role in the portal and record: the
+- [x] With the network panel open, click a role in the portal and record: the
       federation request URL pattern, the response field names, and how the
       page reaches the console afterwards.
-- [ ] Record the portal's hostname form (for example `*.awsapps.com/start`,
+- [x] Record the portal's hostname form (for example `*.awsapps.com/start`,
       `*.portal.<region>.app.aws`) and the hosts its API calls go to.
 - [x] Add a blocking listener with `filterResponseData` on the federation
       request. Record which permissions Manifest V3 needs for it, including
       whether `webRequestFilterResponse` is required.
-- [ ] Build the sign-in URL from the response, open it in a container named
+- [x] Build the sign-in URL from the response, open it in a container named
       for the account and permission set, and close the original tab.
 - [ ] Find where the account name comes from: record which portal API
       response carries it and whether it is always seen before a role click.
@@ -219,6 +221,47 @@ The interception code in `spike/background.js` is written from the
 behaviour described in INV-0001 and has not yet been run against a real
 access portal.
 
+#### Results against a real portal
+
+Observed on Firefox 159.0.1 in a normal profile. Identifiers are replaced
+with placeholders.
+
+- **Portal host:** `<directory-id>.awsapps.com/start/`, where the first
+  label is the IAM Identity Center directory ID (`d-1234567890`). The portal
+  page makes its API calls to `portal.sso.<region>.amazonaws.com`.
+- **Requests seen from the portal page** (each preceded by an OPTIONS
+  preflight):
+
+  | Method | Path | Purpose |
+  | ------ | ---- | ------- |
+  | POST | `/auth/sso-token` | Portal session |
+  | GET | `/token/whoAmI`, `/user` | Signed-in user |
+  | POST | `/instance/appinstances` | Account list |
+  | POST | `/instance/appinstance/<ins-id>/profiles` | Roles for one account |
+  | GET | `/federation/console?account_id=…&role_name=…` | Console sign-in token |
+
+- **Federation response:** JSON with exactly three fields, `signInToken`,
+  `signInFederationLocation` and `destination`. The sign-in location is on
+  `<region>.signin.aws.amazon.com`.
+- **Hand-off works.** Withholding that response and opening
+  `<signInFederationLocation>?Action=login&SigninToken=…&Issuer=…&Destination=…`
+  in a container produced a console tab in a container per account and
+  role. Five role clicks across three accounts and two portals each got
+  their own container.
+- **Portal routing works.** A portal opened in a tab with no container was
+  reopened in its portal container; a later visit reused that container.
+- **A second portal was not moved**, and its consoles were still named for
+  that portal. To confirm: that it was opened from a tab already in a
+  container, which is the accepted behaviour.
+- **Bug found:** account names were never learned, so containers were named
+  with the account ID. The account list is a POST and the spike only read
+  GET responses. Fixed; the fix also logs the field names of the response
+  so the shape can be recorded.
+- **Default organization label** is the directory ID, which is not
+  readable. The editable label in the design matters more than expected,
+  and the design should look for a better default (the portal's display
+  name, if the API exposes one).
+
 <!--docz:criteria:start-->
 #### Success Criteria
 
@@ -246,7 +289,7 @@ Confirm admin-only routing gives concurrent admin sessions across tenants.
       and path only, never the value).
 - [ ] Record how the admin console signs in: the redirects between
       `<org>-admin` and `<org>` hosts, and whether any step is a POST.
-- [ ] Route top-level GET requests to `<org>-admin` hosts from a tab with no
+- [x] Route top-level GET requests to `<org>-admin` hosts from a tab with no
       container into a container for that tenant. Leave tabs already in a
       container alone.
 - [ ] Confirm the sign-in redirect to `<org>.okta.com` completes inside the
@@ -274,6 +317,14 @@ for a tenant that does not exist:
 Still to do against real tenants: the sign-in flow inside the container,
 two tenants signed in at once, and the cause of the sign-out without
 containers.
+
+#### Results against real tenants
+
+- Admin consoles for two tenants, one on `okta.com` and one on
+  `oktapreview.com`, were each moved into their own container on first
+  visit.
+- To confirm: that sign-in completed inside each container and both stayed
+  signed in while switching tabs.
 
 <!--docz:criteria:start-->
 #### Success Criteria
