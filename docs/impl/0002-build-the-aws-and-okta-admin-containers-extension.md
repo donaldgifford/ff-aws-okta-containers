@@ -158,7 +158,7 @@ anything is built on them.
       and `extension/types/browser.d.ts`: hand-written declarations for
       only the `browser.*` calls the extension makes, each with a link to
       its MDN page.
-- [ ] Add a `biome.json` that lints and formats `extension/` and
+- [x] Add a `biome.json` that lints and formats `extension/` and
       `scripts/`.
 - [ ] Tests run with `node --test` and Node's built-in assertions.
 - [ ] Add `scripts/check-source.mjs`, which fails if anything under

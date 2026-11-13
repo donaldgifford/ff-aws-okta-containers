@@ -11,8 +11,12 @@
 import { readFile, writeFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 
-const MANIFEST = fileURLToPath(new URL("../extension/manifest.json", import.meta.url));
-const REGIONS = fileURLToPath(new URL("../extension/regions.json", import.meta.url));
+const MANIFEST = fileURLToPath(
+  new URL("../extension/manifest.json", import.meta.url),
+);
+const REGIONS = fileURLToPath(
+  new URL("../extension/regions.json", import.meta.url),
+);
 
 // Hosts that may be requested at enrolment. None are granted at install.
 const PORTAL_PAGE_PATTERNS = ["https://*.awsapps.com/*", "https://*.app.aws/*"];
@@ -27,7 +31,9 @@ const OKTA_PATTERNS = [
  * @returns {string[]}
  */
 export function optionalHostPermissions(regions) {
-  const api = [...regions].sort().map((region) => `https://portal.sso.${region}.amazonaws.com/*`);
+  const api = [...regions]
+    .sort()
+    .map((region) => `https://portal.sso.${region}.amazonaws.com/*`);
   return [...PORTAL_PAGE_PATTERNS, ...api, ...OKTA_PATTERNS];
 }
 

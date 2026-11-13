@@ -31,9 +31,14 @@ declare namespace browser {
     function query(details: { name?: string }): Promise<ContextualIdentity[]>;
     function get(cookieStoreId: string): Promise<ContextualIdentity>;
     function create(details: Details): Promise<ContextualIdentity>;
-    function update(cookieStoreId: string, details: Partial<Details>): Promise<ContextualIdentity>;
+    function update(
+      cookieStoreId: string,
+      details: Partial<Details>,
+    ): Promise<ContextualIdentity>;
     function remove(cookieStoreId: string): Promise<ContextualIdentity>;
-    const onRemoved: WebExtEvent<(changeInfo: { contextualIdentity: ContextualIdentity }) => void>;
+    const onRemoved: WebExtEvent<
+      (changeInfo: { contextualIdentity: ContextualIdentity }) => void
+    >;
   }
 
   /** https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs */
@@ -57,8 +62,18 @@ declare namespace browser {
     function get(tabId: number): Promise<Tab>;
     function create(properties: CreateProperties): Promise<Tab>;
     function remove(tabId: number | number[]): Promise<void>;
-    function query(queryInfo: { cookieStoreId?: string; active?: boolean; currentWindow?: boolean }): Promise<Tab[]>;
-    const onUpdated: WebExtEvent<(tabId: number, changeInfo: { url?: string; status?: string }, tab: Tab) => void>;
+    function query(queryInfo: {
+      cookieStoreId?: string;
+      active?: boolean;
+      currentWindow?: boolean;
+    }): Promise<Tab[]>;
+    const onUpdated: WebExtEvent<
+      (
+        tabId: number,
+        changeInfo: { url?: string; status?: string },
+        tab: Tab,
+      ) => void
+    >;
   }
 
   /** https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/storage */
@@ -74,7 +89,9 @@ declare namespace browser {
       newValue?: unknown;
     }
     const local: StorageArea;
-    const onChanged: WebExtEvent<(changes: Record<string, StorageChange>, areaName: string) => void>;
+    const onChanged: WebExtEvent<
+      (changes: Record<string, StorageChange>, areaName: string) => void
+    >;
   }
 
   /** https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/webRequest */
@@ -112,7 +129,11 @@ declare namespace browser {
       details: RequestDetails,
     ) => BlockingResponse | Promise<BlockingResponse> | undefined;
     interface BeforeRequestEvent {
-      addListener(listener: BeforeRequestListener, filter: RequestFilter, extraInfoSpec?: "blocking"[]): void;
+      addListener(
+        listener: BeforeRequestListener,
+        filter: RequestFilter,
+        extraInfoSpec?: "blocking"[],
+      ): void;
       removeListener(listener: BeforeRequestListener): void;
       hasListener(listener: BeforeRequestListener): boolean;
     }
