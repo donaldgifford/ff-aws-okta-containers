@@ -222,7 +222,7 @@ browser APIs. This is the bulk of the test suite.
       (`aws-portal` or `okta-admin`, with its key) or nothing. Includes the
       `awsapps.com` and `app.aws` portal forms and the three Okta base
       domains.
-- [ ] `core/routing.js`: request facts (method, tab container, private
+- [x] `core/routing.js`: request facts (method, tab container, private
       window, target, settings) to a decision with a reason.
 - [ ] `core/federation.js`: validate the request parameters
       (`account_id`, `role_name`); parse and validate the response body;
