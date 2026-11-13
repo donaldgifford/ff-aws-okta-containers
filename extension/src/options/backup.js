@@ -85,9 +85,10 @@ export function createBackupSection({ store, registry }) {
         const waiting = Object.values(state.organizations).filter(
           (organization) => !organization.accessGranted,
         ).length;
-        return waiting === 0
-          ? "Settings imported."
-          : `Settings imported. ${waiting} of the organizations above need access granted.`;
+        if (waiting === 0) return "Settings imported.";
+        return waiting === 1
+          ? "Settings imported. One organization above needs access granted."
+          : `Settings imported. ${waiting} organizations above need access granted.`;
       } finally {
         // So that choosing the same file again is noticed.
         importInput.value = "";

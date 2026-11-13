@@ -526,9 +526,25 @@ The rest of the settings, on top of the Organizations section from phase 4.
 - [x] Unit tests: which containers a settings change renames; cleanup
       selection; export contents; import validation and rejection of a
       newer schema.
-- [ ] By hand: edit a label and watch containers rename without
+- [x] By hand: edit a label and watch containers rename without
       duplicates; rename one in Firefox and confirm it is left alone; run
-      cleanup; export, reset, import.
+      cleanup; export, reset, import. **Result (Firefox 160):** all as
+      expected, run by the same headless script as the earlier checks,
+      through the real options page. A label edit and a template change
+      renamed containers in place with the count unchanged; a container
+      renamed outside the extension kept its name, was shown as "Renamed
+      by hand", and took its computed name back when asked; a new colour
+      rule recoloured without renaming; with a switch off its kind was left
+      alone; cleanup listed only the container with no open tabs and
+      removed it after confirmation; an export downloaded as a file with no
+      container IDs or account data; a newer-version file and a file that
+      was not JSON changed nothing and said why; a good file was applied
+      and its new organization was shown as needing access.
+
+The run found one bug. Firefox 160 reports the container colour
+"turquoise" as "cyan", so a turquoise container looked out of date on every
+use and had its colour set again each time. The two names are now treated
+as the same colour.
 
 <!--docz:tasks:end-->
 
