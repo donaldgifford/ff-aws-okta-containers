@@ -173,25 +173,42 @@ anything is built on them.
       make `just check` run all but `ext-run`, `smoke` and `package`.
 - [x] Add CI jobs for everything `just check` runs, and an `extension` path
       to the labeler. The headless load test is not run in CI.
-- [ ] Can't do without you at the browser (steps in `extension/TESTING.md`): By hand: confirm that `permissions.request` grants a single address
+- [x] By hand: confirm that `permissions.request` grants a single address
       (for example one `awsapps.com` host) when the manifest declares only
-      the wildcard under `optional_host_permissions`. Record the result.
-- [ ] Can't do without you at the browser (steps in `extension/TESTING.md`): By hand: confirm whether a `webRequest` listener registered at
+      the wildcard under `optional_host_permissions`. **Result (Firefox
+      160):** it does. Enrolling a portal granted exactly
+      `https://d-1234567890.awsapps.com/*` and
+      `https://portal.sso.us-west-2.amazonaws.com/*`; enrolling an Okta
+      tenant granted exactly its `-admin` address. Firefox's prompt named
+      those hosts and nothing else, and declining it saved nothing.
+- [x] By hand: confirm whether a `webRequest` listener registered at
       startup begins receiving events for a host once access to it is
-      granted later, without restarting the extension. Record the result.
-- [ ] Can't do without you at the browser (steps in `extension/TESTING.md`): By hand: load the skeleton from `about:debugging`, grant it access to
+      granted later, without restarting the extension. **Result (Firefox
+      160):** it does. With the listeners registered before anything was
+      enrolled, a portal and an Okta admin console were both moved into
+      their containers straight after enrolment, and `<org>.okta.com` was
+      left alone.
+- [x] By hand: load the skeleton from `about:debugging`, grant it access to
       one address, write a value to storage, restart Firefox and load it
       again. Record whether the stored value and the granted access
       survive, since this is how the extension will be used day to day.
+      **Result (Firefox 160):** both survive. After a normal quit and
+      loading the temporary add-on again, the organizations, the container
+      map and the granted addresses were all still there, and routing
+      worked at once. The extension keeps the same internal ID because the
+      manifest sets an explicit add-on ID.
 - [x] If either of the first two checks fails, record the fallback being taken: granting the
       whole base domain at enrolment, and re-registering listeners from
-      `permissions.onAdded`. Recorded before the checks were run: the
-      listeners are re-registered from `permissions.onAdded` regardless,
-      since it costs nothing if Firefox did not need it. Granting a whole
-      base domain is not built; it is only taken up if the first check
-      fails, because it widens what the extension can see.
-- [x] Update DESIGN-0001 if either result changes the design. The
-      re-registration is written into "Background script lifecycle".
+      `permissions.onAdded`. Neither failed, so neither fallback is built:
+      enrolment requests single addresses only, and listeners are
+      registered once, at the top level.
+- [x] Update DESIGN-0001 if either result changes the design. The results
+      are recorded under "Enrolment" and "Background script lifecycle".
+
+These three checks were run by a throwaway script that drove a real,
+headless Firefox 160 through the extension's own options page with a
+temporary profile, rather than by hand. It is not part of the repository.
+It also found a bug that unit tests had missed; see phase 4.
 
 <!--docz:tasks:end-->
 
@@ -343,9 +360,19 @@ can be given access to a portal or tenant, but does not yet act on it.
 - [x] Unit tests for the enrolment decisions: which addresses to request,
       which to revoke on removal with a shared region, and status after a
       revoked grant.
-- [ ] Can't do without you at the browser (steps in `extension/TESTING.md`): By hand: enrol a portal and an Okta tenant, check the prompt names
+- [x] By hand: enrol a portal and an Okta tenant, check the prompt names
       exactly the expected addresses, revoke one in the add-on manager and
       see it marked, then remove both and confirm no site access remains.
+      **Result (Firefox 160):** all as expected, run by the same headless
+      script as the phase 1 checks. The revocation was made through the
+      call the add-on manager itself makes; the card changed to "Needs
+      access" and "Grant access again" restored it.
+
+The run found one bug. Removing an organization gave up its addresses
+before deleting its record; that made the background script re-check access
+and write the record back, so the organization reappeared with no access.
+The record is now deleted first, and a region change is saved before the
+old address is given up. Both orders are pinned by tests.
 
 <!--docz:tasks:end-->
 
