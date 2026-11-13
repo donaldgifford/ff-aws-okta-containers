@@ -30,6 +30,13 @@ test("only the registry may create containers", () => {
   assert.deepEqual(violations("background/registry.js", source), []);
 });
 
+test("the pure core may not touch a browser API", () => {
+  const source = "await browser.tabs.get(tabId);";
+
+  assert.equal(violations("core/routing.js", source).length, 1);
+  assert.deepEqual(violations("background/index.js", source), []);
+});
+
 test("comments are ignored but URLs in strings survive", () => {
   const source = [
     "// never call fetch(url) here",

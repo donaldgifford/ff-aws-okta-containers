@@ -238,9 +238,9 @@ browser APIs. This is the bulk of the test suite.
       a suggested label.
 - [x] JSDoc type definitions for targets, decisions, organizations,
       settings and container records, shared by the later phases.
-- [ ] Keep `extension/types/browser.d.ts` in step with the calls each phase
+- [x] Keep `extension/types/browser.d.ts` in step with the calls each phase
       adds; a call with no declaration fails type checking.
-- [ ] Unit tests for all of the above, including every case listed under
+- [x] Unit tests for all of the above, including every case listed under
       Testing Strategy in DESIGN-0001.
 - [x] Sanitized fixtures for the federation and account-list responses,
       taken from the shapes recorded in IMPL-0001.

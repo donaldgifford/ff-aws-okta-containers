@@ -4,9 +4,9 @@
 //   node scripts/check-source.mjs
 //
 // The extension makes no network requests of its own, never touches the
-// cookies API, runs no dynamic code, and lets only the container registry
-// create, rename or remove containers. This script fails if the source says
-// otherwise.
+// cookies API, runs no dynamic code, lets only the container registry
+// create, rename or remove containers, and keeps browser APIs out of the pure
+// core. This script fails if the source says otherwise.
 
 import { readdir, readFile } from "node:fs/promises";
 import { join, relative } from "node:path";
@@ -20,6 +20,8 @@ const SOURCE_DIR = fileURLToPath(new URL("../extension/src", import.meta.url));
  * @property {RegExp} pattern Matched against source with comments removed.
  * @property {string[]} [allowedIn] Files, relative to extension/src, exempt
  *   from this rule.
+ * @property {string} [onlyIn] A directory prefix, relative to extension/src;
+ *   the rule applies only to files under it.
  */
 
 /** @type {Rule[]} */
@@ -36,6 +38,11 @@ export const RULES = [
     name: "contextualIdentities.create/update/remove outside the registry",
     pattern: /\bcontextualIdentities\s*\.\s*(create|update|remove)\b/,
     allowedIn: ["background/registry.js"],
+  },
+  {
+    name: "a browser API in the pure core",
+    pattern: /\bbrowser\s*\./,
+    onlyIn: "core/",
   },
 ];
 
@@ -59,7 +66,10 @@ export function stripComments(source) {
 export function violations(file, source) {
   const code = stripComments(source);
   return RULES.filter(
-    (rule) => !rule.allowedIn?.includes(file) && rule.pattern.test(code),
+    (rule) =>
+      !rule.allowedIn?.includes(file) &&
+      (rule.onlyIn === undefined || file.startsWith(rule.onlyIn)) &&
+      rule.pattern.test(code),
   ).map((rule) => `${file}: uses ${rule.name}`);
 }
 
