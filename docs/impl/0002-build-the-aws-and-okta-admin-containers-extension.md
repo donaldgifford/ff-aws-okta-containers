@@ -218,7 +218,7 @@ browser APIs. This is the bulk of the test suite.
 <!--docz:tasks:start-->
 #### Tasks
 
-- [ ] `core/classify.js`: URL plus the enrolled organizations to a target
+- [x] `core/classify.js`: URL plus the enrolled organizations to a target
       (`aws-portal` or `okta-admin`, with its key) or nothing. Includes the
       `awsapps.com` and `app.aws` portal forms and the three Okta base
       domains.
