@@ -242,7 +242,7 @@ browser APIs. This is the bulk of the test suite.
       adds; a call with no declaration fails type checking.
 - [ ] Unit tests for all of the above, including every case listed under
       Testing Strategy in DESIGN-0001.
-- [ ] Sanitized fixtures for the federation and account-list responses,
+- [x] Sanitized fixtures for the federation and account-list responses,
       taken from the shapes recorded in IMPL-0001.
 
 <!--docz:tasks:end-->
