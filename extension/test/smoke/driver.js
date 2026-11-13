@@ -18,12 +18,41 @@ self.addEventListener("unhandledrejection", (event) => {
 });
 
 /**
- * Checks that only exist once later phases add the code they exercise.
+ * Exercises the registry against real containers: two requests for one key
+ * must leave exactly one container, which is then cleaned up.
  *
- * @returns {Promise<Record<string, unknown>>}
+ * @returns {Promise<Record<string, boolean>>}
  */
-async function extraChecks() {
-  return {};
+async function registryChecks() {
+  const { createStore } = await import("./src/storage/store.js");
+  const { createRegistry } = await import("./src/background/registry.js");
+  const store = createStore(browser.storage.local);
+  const registry = createRegistry({
+    store,
+    identities: browser.contextualIdentities,
+  });
+  const key = "aws:111122223333:SmokeTest";
+  const before = await browser.contextualIdentities.query({});
+
+  const first = await registry.getOrCreate(key, null);
+  const second = await registry.getOrCreate(key, null);
+  const during = await browser.contextualIdentities.query({});
+  const created = during.filter(
+    (identity) =>
+      !before.some((old) => old.cookieStoreId === identity.cookieStoreId),
+  );
+
+  const removed = await registry.removeUnused(browser.tabs);
+  const after = await browser.contextualIdentities.query({});
+
+  return {
+    "the second call reuses the first container": first === second,
+    "two calls for one key leave one container": created.length === 1,
+    "the container is named from its key":
+      created[0]?.name === "111122223333(unknown) / SmokeTest",
+    "an unused managed container can be removed":
+      removed.includes(key) && after.length === before.length,
+  };
 }
 
 async function report() {
@@ -32,7 +61,7 @@ async function report() {
   try {
     const granted = await browser.permissions.getAll();
     result.origins = granted.origins ?? [];
-    Object.assign(result, await extraChecks());
+    result.checks = await registryChecks();
   } catch (error) {
     errors.push(`driver: ${String(error)}`);
   }

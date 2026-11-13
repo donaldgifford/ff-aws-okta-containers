@@ -290,7 +290,7 @@ containers.
       creating one container; a template change renaming instead of
       creating; a hand-renamed container not being renamed back; a deleted
       container being recreated; migrations; newer-schema refusal.
-- [ ] Extend the local headless load test to create a container through
+- [x] Extend the local headless load test to create a container through
       the registry and reuse it on a second call.
 
 <!--docz:tasks:end-->
