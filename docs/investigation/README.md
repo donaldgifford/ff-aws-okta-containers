@@ -15,7 +15,7 @@ Design docs, plans, and implementation docs can reference investigations by ID
 <!-- markdownlint-disable MD013 -->
 | ID | Title | Status | Date | Author | Link |
 | --- | --- | --- | --- | --- | --- |
-| INV-0001 | Firefox extension for automatic AWS SSO and Okta containers | In Progress | 2026-11-12 | Donald Gifford | [0001-firefox-extension-for-automatic-aws-sso-and-okta-containers.md](0001-firefox-extension-for-automatic-aws-sso-and-okta-containers.md) |
+| INV-0001 | Firefox extension for automatic AWS SSO and Okta containers | Concluded | 2026-11-12 | Donald Gifford | [0001-firefox-extension-for-automatic-aws-sso-and-okta-containers.md](0001-firefox-extension-for-automatic-aws-sso-and-okta-containers.md) |
 <!-- markdownlint-restore -->
 <!-- END DOCZ AUTO-GENERATED -->
 <!-- BEGIN DOCZ AUTO-GENERATED -->

@@ -34,6 +34,6 @@ docz create impl "Your Implementation Title"
 <!-- markdownlint-disable MD013 -->
 | ID | Title | Status | Date | Author | Link |
 | --- | --- | --- | --- | --- | --- |
-| IMPL-0001 | Spike: validate AWS and Okta container interception | In Progress | 2026-11-12 | Donald Gifford | [0001-spike-validate-aws-and-okta-container-interception.md](0001-spike-validate-aws-and-okta-container-interception.md) |
+| IMPL-0001 | Spike: validate AWS and Okta container interception | Completed | 2026-11-12 | Donald Gifford | [0001-spike-validate-aws-and-okta-container-interception.md](0001-spike-validate-aws-and-okta-container-interception.md) |
 <!-- markdownlint-restore -->
 <!-- END DOCZ AUTO-GENERATED -->

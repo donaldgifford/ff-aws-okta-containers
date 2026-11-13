@@ -10,6 +10,11 @@ this project adheres to [Semantic Versioning](https://semver.org/).
 
 - *(spike)* Add throwaway extension harness for IMPL-0001 phase 1
 - *(spike)* Add AWS and Okta interception for IMPL-0001 phases 2 and 3
+- *(spike)* Put the account name first in console container names
+
+### Bug Fixes
+
+- *(spike)* Learn account names from the portal's POST account list
 
 ### Documentation
 
@@ -18,6 +23,8 @@ this project adheres to [Semantic Versioning](https://semver.org/).
 - Link INV-0001 from the spike plan
 - Record the private-window result in IMPL-0001
 - Record the normal-window result in IMPL-0001
+- Record the confirmed account-name fix in IMPL-0001
+- Conclude INV-0001 and complete the IMPL-0001 spike
 
 ### Miscellaneous Tasks
 
