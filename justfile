@@ -10,7 +10,7 @@ _default:
 
 # Run every linter
 [group('lint')]
-lint: lint-md lint-yaml lint-actions lint-shell spike-lint
+lint: lint-md lint-yaml lint-actions lint-shell
 
 # Lint Markdown
 [group('lint')]
@@ -100,18 +100,6 @@ package version:
       extension/manifest.json > "$work/manifest.json"
     web-ext build --source-dir "$work" --artifacts-dir dist --overwrite-dest \
       --filename "ff-aws-okta-containers-{{ version }}.zip"
-
-# ─── Spike ──────────────────────────────────────────────────────────
-
-# Lint the spike extension
-[group('spike')]
-spike-lint:
-    @web-ext lint --source-dir spike
-
-# Run the spike extension in a fresh temporary Firefox profile
-[group('spike')]
-spike-run:
-    @web-ext run --source-dir spike
 
 # ─── Docs ───────────────────────────────────────────────────────────
 

@@ -424,7 +424,7 @@ portals.
 - [x] Unit tests for the listener glue with the fake browser: success,
       each failure path releasing the body, the shortcut-tab rule, and
       rename on name arrival.
-- [ ] By hand, against a real portal: a role click, a second account, the
+- [ ] Can't do without you at the browser (steps in `extension/TESTING.md`): By hand, against a real portal: a role click, a second account, the
       same role twice, a bookmarked shortcut link, a role click after the
       background script has gone idle with DevTools closed, and a portal
       enrolled with the wrong region.
@@ -467,14 +467,22 @@ container. After this phase the extension does everything the spike did.
       new container.
 - [x] Unit tests for the listener glue: move, each leave-alone reason, and
       the failure path.
-- [ ] By hand: a portal and two Okta tenants from ordinary tabs; sign-in
+- [ ] Can't do without you at the browser (steps in `extension/TESTING.md`): By hand: a portal and two Okta tenants from ordinary tabs; sign-in
       completing inside each container; two tenants and two portals signed
       in at once; `<org>.okta.com` not moving; a portal launched from an
       Okta dashboard tile in an ordinary tab; a portal opened from inside
       a container staying there.
-- [ ] Delete `spike/`, the `spike-*` recipes and the `spike` labeler path.
-- [ ] Note in this document that containers created by the spike are not
+- [x] Delete `spike/`, the `spike-*` recipes and the `spike` labeler path.
+- [x] Note in this document that containers created by the spike are not
       adopted and are removed by hand.
+
+**Containers left by the spike.** The spike looked containers up by name
+and created them without recording them. The extension never adopts a
+container it did not create, so those containers are not reused: the first
+use of each portal, tenant or console creates a new one alongside. Delete
+the spike's containers once, by hand, in Firefox's settings under Tabs,
+Manage Containers. Sessions in them are lost; sign in again in the new
+containers.
 
 <!--docz:tasks:end-->
 
