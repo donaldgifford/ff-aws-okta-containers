@@ -185,7 +185,7 @@ that a portal can live in its own container.
       whether `webRequestFilterResponse` is required.
 - [x] Build the sign-in URL from the response, open it in a container named
       for the account and permission set, and close the original tab.
-- [ ] Find where the account name comes from: record which portal API
+- [x] Find where the account name comes from: record which portal API
       response carries it and whether it is always seen before a role click.
 - [ ] Open a bookmarked shortcut link
       (`…/#/console?account_id=…&role_name=…`) and confirm it is handled the
@@ -255,8 +255,10 @@ with placeholders.
   container, which is the accepted behaviour.
 - **Bug found:** account names were never learned, so containers were named
   with the account ID. The account list is a POST and the spike only read
-  GET responses. Fixed; the fix also logs the field names of the response
-  so the shape can be recorded.
+  GET responses. Fixed and confirmed: after the fix a console container
+  was named `<directory-id> <account-name> / <PermissionSet>`. The account
+  name comes from `result[].searchMetadata.AccountName` in the account-list
+  response, keyed by `AccountId`.
 - **Default organization label** is the directory ID, which is not
   readable. The editable label in the design matters more than expected,
   and the design should look for a better default (the portal's display
