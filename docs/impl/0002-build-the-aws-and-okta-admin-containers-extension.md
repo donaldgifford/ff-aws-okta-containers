@@ -275,7 +275,7 @@ containers.
 - [x] `storage/schema.js`: the settings, organization, account and managed
       container records from DESIGN-0001, defaults (including the three
       default colour rules), and numbered migrations starting at version 1.
-- [ ] `storage/store.js`: read and write over `storage.local` behind one
+- [x] `storage/store.js`: read and write over `storage.local` behind one
       cached promise; refuse to run on data from a newer schema version.
 - [ ] `background/registry.js`: get-or-create by key; one creation at a
       time per key; rename in place when the desired name changes;
