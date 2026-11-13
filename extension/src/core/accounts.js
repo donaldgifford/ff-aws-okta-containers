@@ -4,6 +4,22 @@
 const ACCOUNT_ID = /^\d{12}$/;
 const MAX_NAME_LENGTH = 128;
 
+const ACCOUNT_LIST_PATH = "/instance/appinstances";
+
+/**
+ * Whether a request is the portal fetching its account list. The portal
+ * sends it as a POST, after an OPTIONS preflight that has no body to read.
+ *
+ * @param {string} method
+ * @param {string} url
+ * @returns {boolean}
+ */
+export function isAccountListRequest(method, url) {
+  if (method === "OPTIONS" || !URL.canParse(url)) return false;
+  const { protocol, pathname } = new URL(url);
+  return protocol === "https:" && pathname === ACCOUNT_LIST_PATH;
+}
+
 /**
  * @typedef {object} ListedAccount
  * @property {string} accountId

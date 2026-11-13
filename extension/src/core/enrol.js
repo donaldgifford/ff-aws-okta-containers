@@ -68,6 +68,16 @@ export function apiHost(region) {
   return `portal.sso.${region}.amazonaws.com`;
 }
 
+const API_HOST = /^portal\.sso\.[a-z0-9-]+\.amazonaws\.com$/;
+
+/**
+ * @param {string} url
+ * @returns {boolean} Whether the address is on a portal API host.
+ */
+export function isApiUrl(url) {
+  return URL.canParse(url) && API_HOST.test(new URL(url).hostname);
+}
+
 /**
  * @param {string} host
  * @returns {string} The match pattern covering everything on a host.

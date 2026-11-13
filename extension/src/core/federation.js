@@ -65,6 +65,25 @@ export const HAND_OFF_FAILURES = Object.freeze({
  */
 
 /**
+ * Whether a request is the portal asking for a console sign-in token: the
+ * federation path with both an account and a role named. The values are
+ * checked later, by parseFederationRequest.
+ *
+ * @param {string} url
+ * @returns {boolean}
+ */
+export function isFederationRequest(url) {
+  if (!URL.canParse(url)) return false;
+  const { protocol, pathname, searchParams } = new URL(url);
+  return (
+    protocol === "https:" &&
+    pathname === FEDERATION_PATH &&
+    Boolean(searchParams.get("account_id")) &&
+    Boolean(searchParams.get("role_name"))
+  );
+}
+
+/**
  * Reads the account and role from a portal sign-in request.
  *
  * @param {string} url The request URL.

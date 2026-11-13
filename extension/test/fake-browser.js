@@ -1,6 +1,7 @@
 // A small in-memory stand-in for the browser APIs the extension's stateful
-// code uses: contextualIdentities, storage.local, tabs and permissions. It
-// keeps just enough behaviour for the tests and records nothing else.
+// code uses: contextualIdentities, storage.local, tabs, permissions, the
+// toolbar button and response filters. It keeps just enough behaviour for
+// the tests and records nothing else.
 
 function createEvent() {
   const listeners = new Set();
@@ -141,6 +142,29 @@ export function createFakeBrowser({ storage = {}, origins = [] } = {}) {
     },
   };
 
+  /** @type {Map<string, ReturnType<typeof createFilter>>} */
+  const filters = new Map();
+  const webRequest = {
+    filterResponseData(requestId) {
+      const filter = createFilter();
+      filters.set(requestId, filter);
+      return filter;
+    },
+  };
+
+  const badge = { text: "", title: null, color: null };
+  const action = {
+    async setBadgeText({ text }) {
+      badge.text = text;
+    },
+    async setBadgeBackgroundColor({ color }) {
+      badge.color = color;
+    },
+    async setTitle({ title }) {
+      badge.title = title;
+    },
+  };
+
   const permissions = {
     async contains({ origins: wanted = [] }) {
       return wanted.every((origin) => granted.has(origin));
@@ -162,9 +186,45 @@ export function createFakeBrowser({ storage = {}, origins = [] } = {}) {
     storage: { local, onChanged: storageChanged },
     tabs,
     permissions,
+    webRequest,
+    action,
 
     // Test controls, not part of any browser API.
     calls,
+    badge,
+    filters,
+    /**
+     * Plays a response through the filter attached to a request, in the
+     * given chunks, and resolves with what the page received once the
+     * filter has been closed.
+     */
+    async respond(requestId, ...chunks) {
+      const filter = filters.get(requestId);
+      if (!filter) throw new Error(`No filter was attached to ${requestId}`);
+      const encoder = new TextEncoder();
+      for (const chunk of chunks) {
+        filter.ondata?.({ data: encoder.encode(chunk).buffer });
+      }
+      filter.onstop?.({});
+      await filter.closed;
+      return filter.received();
+    },
+    /** Puts a tab in the fake, as if the user had opened it. */
+    addTab(properties) {
+      const tab = {
+        id: nextTab,
+        index: openTabs.size,
+        windowId: 1,
+        url: "about:newtab",
+        active: true,
+        incognito: false,
+        cookieStoreId: "firefox-default",
+        ...properties,
+      };
+      nextTab += 1;
+      openTabs.set(tab.id, tab);
+      return { ...tab };
+    },
     identities,
     openTabs,
     /** Everything in storage.local, as a plain object. */
@@ -190,6 +250,40 @@ export function createFakeBrowser({ storage = {}, origins = [] } = {}) {
       if (!identity) return;
       identities.delete(cookieStoreId);
       identityRemoved.emit({ contextualIdentity: { ...identity } });
+    },
+  };
+}
+
+/** A stand-in for webRequest.StreamFilter that records what the page gets. */
+function createFilter() {
+  /** @type {Uint8Array[]} */
+  const written = [];
+  let finish = () => {};
+  const closed = new Promise((resolve) => {
+    finish = resolve;
+  });
+  return {
+    ondata: null,
+    onstop: null,
+    onerror: null,
+    error: "",
+    disconnected: false,
+    closed,
+    write(data) {
+      written.push(new Uint8Array(data));
+    },
+    close() {
+      finish();
+    },
+    disconnect() {
+      this.disconnected = true;
+      finish();
+    },
+    /** Everything written through to the page, as text. */
+    received() {
+      return new TextDecoder().decode(
+        Uint8Array.from(written.flatMap((chunk) => [...chunk])),
+      );
     },
   };
 }

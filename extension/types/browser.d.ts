@@ -67,13 +67,21 @@ declare namespace browser {
       active?: boolean;
       currentWindow?: boolean;
     }): Promise<Tab[]>;
-    const onUpdated: WebExtEvent<
-      (
-        tabId: number,
-        changeInfo: { url?: string; status?: string },
-        tab: Tab,
-      ) => void
-    >;
+    type UpdatedListener = (
+      tabId: number,
+      changeInfo: { url?: string; status?: string },
+      tab: Tab,
+    ) => void;
+    /** https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs/onUpdated */
+    interface UpdatedEvent {
+      addListener(
+        listener: UpdatedListener,
+        filter?: { urls?: string[]; properties?: "url"[] },
+      ): void;
+      removeListener(listener: UpdatedListener): void;
+      hasListener(listener: UpdatedListener): boolean;
+    }
+    const onUpdated: UpdatedEvent;
   }
 
   /** https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/storage */

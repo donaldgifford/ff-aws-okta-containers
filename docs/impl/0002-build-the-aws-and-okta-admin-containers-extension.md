@@ -343,7 +343,7 @@ can be given access to a portal or tenant, but does not yet act on it.
 - [x] Unit tests for the enrolment decisions: which addresses to request,
       which to revoke on removal with a shared region, and status after a
       revoked grant.
-- [ ] By hand: enrol a portal and an Okta tenant, check the prompt names
+- [ ] Can't do without you at the browser (steps in `extension/TESTING.md`): By hand: enrol a portal and an Okta tenant, check the prompt names
       exactly the expected addresses, revoke one in the add-on manager and
       see it marked, then remove both and confirm no site access remains.
 
@@ -376,25 +376,25 @@ portals.
 - [ ] `background/index.js`: register every listener synchronously at the
       top level, using the result of the phase 1 check to decide whether
       they are re-registered when access is granted.
-- [ ] Federation listener: match `GET /federation/console` with both
+- [x] Federation listener: match `GET /federation/console` with both
       parameters on an enrolled portal's region API host; attach the
       response filter synchronously; buffer the body.
-- [ ] On completion, run `core/federation.js`; on success, get or create
+- [x] On completion, run `core/federation.js`; on success, get or create
       the container and open the sign-in URL beside the requesting tab; on
       any failure, write the buffered body back unchanged.
-- [ ] Close the requesting tab only when it is a shortcut tab.
-- [ ] Account-list listener: pass the response through as it arrives, keep
+- [x] Close the requesting tab only when it is a shortcut tab.
+- [x] Account-list listener: pass the response through as it arrives, keep
       a copy, and save names with the portal they came from.
-- [ ] When a name arrives for an account whose container is named with the
+- [x] When a name arrives for an account whose container is named with the
       account ID, rename the container in place.
-- [ ] Use the portal's label as `{org}` in the container name.
+- [x] Use the portal's label as `{org}` in the container name.
 - [ ] Warning badge on the toolbar button after a failed hand-off, with the
       reason in the tooltip and on the options page; cleared when viewed.
-- [ ] Wrong-region warning: a shortcut tab in an enrolled portal's
+- [x] Wrong-region warning: a shortcut tab in an enrolled portal's
       container with no federation request seen within a few seconds.
-- [ ] Respect the "AWS consoles" switch in settings.
-- [ ] Never log or store a token; logging helpers take field names only.
-- [ ] Unit tests for the listener glue with the fake browser: success,
+- [x] Respect the "AWS consoles" switch in settings.
+- [x] Never log or store a token; logging helpers take field names only.
+- [x] Unit tests for the listener glue with the fake browser: success,
       each failure path releasing the body, the shortcut-tab rule, and
       rename on name arrival.
 - [ ] By hand, against a real portal: a role click, a second account, the

@@ -7,6 +7,7 @@ import {
   CONSOLE_HOME,
   chooseDestination,
   HAND_OFF_FAILURES,
+  isFederationRequest,
   isShortcutTab,
   parseFederationRequest,
   parseFederationResponse,
@@ -233,4 +234,24 @@ test("an exchange for a malformed request is refused", () => {
   });
 
   assert.deepEqual(plan, { ok: false, reason: "bad-request" });
+});
+
+test("a sign-in request is recognised by its path and both parameters", () => {
+  assert.equal(isFederationRequest(REQUEST_URL), true);
+  // Malformed values are still a sign-in request; they are rejected later.
+  assert.equal(
+    isFederationRequest(
+      `https://${API_HOST}/federation/console?account_id=1&role_name=x`,
+    ),
+    true,
+  );
+  for (const url of [
+    `https://${API_HOST}/federation/console?account_id=111122223333`,
+    `https://${API_HOST}/federation/console?role_name=AdminAccess`,
+    `https://${API_HOST}/federation/console`,
+    `https://${API_HOST}/federation/other?account_id=111122223333&role_name=x`,
+    "not a url",
+  ]) {
+    assert.equal(isFederationRequest(url), false, url);
+  }
 });

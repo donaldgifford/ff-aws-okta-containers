@@ -2,7 +2,10 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { test } from "node:test";
 
-import { parseAccountList } from "../../src/core/accounts.js";
+import {
+  isAccountListRequest,
+  parseAccountList,
+} from "../../src/core/accounts.js";
 
 const ACCOUNT_LIST = readFileSync(
   new URL("../fixtures/account-list.json", import.meta.url),
@@ -58,3 +61,14 @@ for (const [label, body] of [
     assert.deepEqual(parseAccountList(body), []);
   });
 }
+
+test("the account list is read whether it is a POST or a GET, never the preflight", () => {
+  const url =
+    "https://portal.sso.us-west-2.amazonaws.com/instance/appinstances";
+
+  assert.equal(isAccountListRequest("POST", url), true);
+  assert.equal(isAccountListRequest("GET", url), true);
+  assert.equal(isAccountListRequest("OPTIONS", url), false);
+  assert.equal(isAccountListRequest("POST", `${url}/other`), false);
+  assert.equal(isAccountListRequest("POST", "not a url"), false);
+});

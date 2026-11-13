@@ -6,6 +6,7 @@ import {
   buildOrganization,
   ENROL_FAILURES,
   enrolmentOffer,
+  isApiUrl,
   originsFor,
   originsToRevoke,
   planEnrolment,
@@ -231,4 +232,19 @@ test("the toolbar button offers nothing for an enrolled or unrelated tab", () =>
   assert.equal(enrolmentOffer("https://example.com/", enrolled), null);
   assert.equal(enrolmentOffer("about:newtab", enrolled), null);
   assert.equal(enrolmentOffer(undefined, enrolled), null);
+});
+
+test("only portal API hosts count as the portal API", () => {
+  assert.equal(
+    isApiUrl("https://portal.sso.us-west-2.amazonaws.com/federation/console"),
+    true,
+  );
+  for (const url of [
+    "https://s3.us-west-2.amazonaws.com/federation/console",
+    "https://portal.sso.us-west-2.amazonaws.com.example.com/x",
+    "https://x.portal.sso.us-west-2.amazonaws.com/x",
+    "not a url",
+  ]) {
+    assert.equal(isApiUrl(url), false, url);
+  }
 });
