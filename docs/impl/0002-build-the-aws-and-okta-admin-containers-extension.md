@@ -161,7 +161,7 @@ anything is built on them.
 - [x] Add a `biome.json` that lints and formats `extension/` and
       `scripts/`.
 - [x] Tests run with `node --test` and Node's built-in assertions.
-- [ ] Add `scripts/check-source.mjs`, which fails if anything under
+- [x] Add `scripts/check-source.mjs`, which fails if anything under
       `extension/src` uses `fetch`, `XMLHttpRequest`, `WebSocket`,
       `sendBeacon`, `eval`, `new Function`, or `browser.cookies`.
 - [ ] Add a headless load test under `extension/test/smoke/`: copy the
