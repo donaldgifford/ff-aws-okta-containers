@@ -282,11 +282,11 @@ containers.
       hand-rename detection using the recorded managed name; recreate when
       the mapped container no longer exists.
 - [x] Handle `contextualIdentities.onRemoved` by forgetting the mapping.
-- [ ] Never adopt, rename or remove a container the extension did not
+- [x] Never adopt, rename or remove a container the extension did not
       create.
 - [x] A small in-memory fake of `contextualIdentities`, `storage.local` and
       `tabs` for tests, kept under `extension/test/`.
-- [ ] Unit tests: create then reuse; two simultaneous requests for one key
+- [x] Unit tests: create then reuse; two simultaneous requests for one key
       creating one container; a template change renaming instead of
       creating; a hand-renamed container not being renamed back; a deleted
       container being recreated; migrations; newer-schema refusal.
