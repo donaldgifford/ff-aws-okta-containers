@@ -146,7 +146,7 @@ anything is built on them.
       ID, `strict_min_version` 140, `data_collection_permissions` of
       `none`, the permissions from DESIGN-0001, no `host_permissions`) and
       a module background script that only logs that it loaded.
-- [ ] Add `extension/regions.json` listing the commercial AWS regions where
+- [x] Add `extension/regions.json` listing the commercial AWS regions where
       IAM Identity Center is available, with the AWS documentation page it
       was taken from.
 - [ ] Add `scripts/gen-manifest.mjs`, which writes the
