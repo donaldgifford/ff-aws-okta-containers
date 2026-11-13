@@ -272,7 +272,7 @@ containers.
 <!--docz:tasks:start-->
 #### Tasks
 
-- [ ] `storage/schema.js`: the settings, organization, account and managed
+- [x] `storage/schema.js`: the settings, organization, account and managed
       container records from DESIGN-0001, defaults (including the three
       default colour rules), and numbered migrations starting at version 1.
 - [ ] `storage/store.js`: read and write over `storage.local` behind one
