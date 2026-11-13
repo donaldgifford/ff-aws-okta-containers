@@ -1,7 +1,7 @@
 ---
 id: IMPL-0001
 title: "Spike: validate AWS and Okta container interception"
-status: In Progress
+status: Completed
 author: Donald Gifford
 created: 2026-11-12
 ---
@@ -35,6 +35,7 @@ created: 2026-11-12
     - [Success Criteria](#success-criteria-2)
   - [Phase 4: Signing dry run and write-up](#phase-4-signing-dry-run-and-write-up)
     - [Tasks](#tasks-3)
+    - [Outcome](#outcome)
     - [Success Criteria](#success-criteria-3)
 - [File Changes](#file-changes)
 - [Testing Plan](#testing-plan)
@@ -187,18 +188,18 @@ that a portal can live in its own container.
       for the account and permission set, and close the original tab.
 - [x] Find where the account name comes from: record which portal API
       response carries it and whether it is always seen before a role click.
-- [ ] Open a bookmarked shortcut link
+- [ ] Not done (see Outcome): Open a bookmarked shortcut link
       (`…/#/console?account_id=…&role_name=…`) and confirm it is handled the
       same way.
-- [ ] Open two roles in two accounts and confirm both console sessions stay
+- [x] Open two roles in two accounts and confirm both console sessions stay
       signed in side by side.
-- [ ] Route the portal host from a tab with no container into a portal
+- [x] Route the portal host from a tab with no container into a portal
       container. Confirm the sign-in redirect to Okta completes inside it and
       that a second portal for another organization can be signed in at the
       same time.
-- [ ] Click the AWS tile on an Okta dashboard in an ordinary tab. Confirm the
+- [ ] Not done (see Outcome): Click the AWS tile on an Okta dashboard in an ordinary tab. Confirm the
       portal moves to its container and asks for one Okta sign-in there.
-- [ ] Let the background script go idle, then click a role, to confirm the
+- [x] Let the background script go idle, then click a role, to confirm the
       listener still fires after the script is woken.
 
 <!--docz:tasks:end-->
@@ -250,9 +251,15 @@ with placeholders.
   their own container.
 - **Portal routing works.** A portal opened in a tab with no container was
   reopened in its portal container; a later visit reused that container.
-- **A second portal was not moved**, and its consoles were still named for
-  that portal. To confirm: that it was opened from a tab already in a
-  container, which is the accepted behaviour.
+- **A second portal was not moved** because it was opened from a tab
+  already in a container, which is the accepted behaviour. Its consoles were
+  still named for that portal.
+- **Concurrent sessions hold.** Consoles in different accounts, and two
+  portals for different organizations, stayed signed in side by side. The
+  short-lived portal tab closed after each role click.
+- **Idle wake-up works.** With the DevTools toolbox closed and Firefox left
+  idle, a role click was still intercepted and opened in the right
+  container.
 - **Bug found:** account names were never learned, so containers were named
   with the account ID. The account list is a POST and the spike only read
   GET responses. Fixed and confirmed: after the fix a console container
@@ -288,20 +295,20 @@ Confirm admin-only routing gives concurrent admin sessions across tenants.
 <!--docz:tasks:start-->
 #### Tasks
 
-- [ ] Without the extension, reproduce the sign-out when switching between two
+- [ ] Not done (see Outcome): Without the extension, reproduce the sign-out when switching between two
       tenants' admin consoles. Record which cookie is shared (name, domain
       and path only, never the value).
-- [ ] Record how the admin console signs in: the redirects between
+- [ ] Not done (see Outcome): Record how the admin console signs in: the redirects between
       `<org>-admin` and `<org>` hosts, and whether any step is a POST.
 - [x] Route top-level GET requests to `<org>-admin` hosts from a tab with no
       container into a container for that tenant. Leave tabs already in a
       container alone.
-- [ ] Confirm the sign-in redirect to `<org>.okta.com` completes inside the
+- [x] Confirm the sign-in redirect to `<org>.okta.com` completes inside the
       container.
-- [ ] Sign in to two tenants' admin consoles and confirm both stay signed in
+- [x] Sign in to two tenants' admin consoles and confirm both stay signed in
       while switching tabs.
-- [ ] Confirm `<org>.okta.com` in an ordinary tab is not moved.
-- [ ] Check the pattern against every Okta base domain in use (for example
+- [x] Confirm `<org>.okta.com` in an ordinary tab is not moved.
+- [x] Check the pattern against every Okta base domain in use (for example
       `oktapreview.com`) and note any custom domains that need manual
       mapping.
 
@@ -327,8 +334,10 @@ containers.
 - Admin consoles for two tenants, one on `okta.com` and one on
   `oktapreview.com`, were each moved into their own container on first
   visit.
-- To confirm: that sign-in completed inside each container and both stayed
-  signed in while switching tabs.
+- Sign-in completed inside each container, and both admin consoles stayed
+  signed in while switching between their tabs.
+- Base domains seen in use: `okta.com` and `oktapreview.com`. No custom
+  domains.
 
 <!--docz:criteria:start-->
 #### Success Criteria
@@ -351,18 +360,62 @@ containers.
 <!--docz:tasks:start-->
 #### Tasks
 
-- [ ] Sign the spike build on the unlisted channel with `web-ext sign`.
+- [ ] Not done (see Outcome): Sign the spike build on the unlisted channel with `web-ext sign`.
       Record whether `data_collection_permissions` is enforced and how long
       signing takes. Install the signed build in release Firefox.
-- [ ] Update INV-0001: replace the unverified items with what was observed,
+- [x] Update INV-0001: replace the unverified items with what was observed,
       correct any finding that turned out wrong, and set its status to
       Concluded.
-- [ ] List the inputs the DESIGN doc needs: final permissions and host
+- [x] List the inputs the DESIGN doc needs: final permissions and host
       patterns, the account-name source, routing rules, and anything that
       behaved differently from INV-0001.
-- [ ] Decide whether `spike/` is deleted or kept for reference, and do it.
+- [x] Decide whether `spike/` is deleted or kept for reference, and do it.
 
 <!--docz:tasks:end-->
+
+#### Outcome
+
+The spike answered the question: the approach in INV-0001 works. INV-0001
+is updated and Concluded.
+
+Not done, and why:
+
+- **Signing dry run.** Deferred to the release work. It does not affect the
+  design, and it needs Mozilla developer credentials.
+- **Cause of the Okta sign-out without containers,** and the exact admin
+  sign-in redirects. Containers fix the problem whatever the cause, and
+  sign-in completes inside the container, so neither blocks the design.
+- **Bookmarked shortcut link,** and a portal launched from an Okta
+  dashboard tile in an ordinary tab. Both go through requests that were
+  exercised, but neither was tried directly. They become test cases for the
+  real extension.
+
+`spike/` is kept for reference until the real extension replaces it, then
+deleted.
+
+Inputs for the DESIGN doc:
+
+- **Permissions:** `contextualIdentities`, `cookies`, `tabs`, `storage`,
+  `webRequest`, `webRequestBlocking`, `webRequestFilterResponse`.
+- **Hosts needed:** the portal page (`*.awsapps.com`), its API
+  (`portal.sso.<region>.amazonaws.com`), and Okta base domains. The spike
+  asked for all of `*.amazonaws.com`; the design should narrow that to the
+  portal API host pattern.
+- **Federation:** GET `/federation/console?account_id=…&role_name=…` on the
+  portal API host, returning `signInToken`, `signInFederationLocation` and
+  `destination`.
+- **Account names:** POST `/instance/appinstances` on the portal API host,
+  `result[].searchMetadata.AccountName` keyed by `AccountId`. Names must be
+  kept somewhere that survives the background script going idle.
+- **Routing rule:** GET, top-level, tab with no container, not a private
+  window. Close the source tab only if it was empty.
+- **Container name:** `<account-name>(<org>) / <PermissionSet>`.
+- **Organization label:** the default from the hostname is a directory ID.
+  Editable labels are required, not optional.
+- **Container identity:** the spike's lookup by name creates duplicates when
+  the name format changes. The stored key-to-container map is required.
+- **Debugging:** an attached DevTools toolbox keeps the background script
+  awake, which hides idle-related bugs.
 
 <!--docz:criteria:start-->
 #### Success Criteria
@@ -395,10 +448,10 @@ containers.
 
 The spike is tested by hand; each phase's tasks are the test steps.
 
-- [ ] Every observation is made in a real Firefox, not inferred from code.
-- [ ] Each success criterion is checked with at least two accounts or two
+- [x] Every observation is made in a real Firefox, not inferred from code.
+- [x] Each success criterion is checked with at least two accounts or two
       tenants, since the goal is concurrent sessions.
-- [ ] Before each commit, review the diff for real identifiers.
+- [x] Before each commit, review the diff for real identifiers.
 
 <!--docz:testing:end-->
 

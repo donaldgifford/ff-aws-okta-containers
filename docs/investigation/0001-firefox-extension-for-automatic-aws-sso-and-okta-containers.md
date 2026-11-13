@@ -1,7 +1,7 @@
 ---
 id: INV-0001
 title: "Firefox extension for automatic AWS SSO and Okta containers"
-status: In Progress
+status: Concluded
 author: Donald Gifford
 created: 2026-11-12
 ---
@@ -24,7 +24,7 @@ created: 2026-11-12
   - [3. Okta: no purpose-built prior art; routing is by hostname](#3-okta-no-purpose-built-prior-art-routing-is-by-hostname)
   - [4. Platform: Manifest V3 is viable in Firefox](#4-platform-manifest-v3-is-viable-in-firefox)
   - [5. Fork or write our own](#5-fork-or-write-our-own)
-  - [Unverified items](#unverified-items)
+  - [Spike results](#spike-results)
 - [Conclusion](#conclusion)
 - [Recommendation](#recommendation)
   - [Proposed shape](#proposed-shape)
@@ -101,8 +101,8 @@ inherits the container).
 5. Compare options and recommend a direction, listing the decisions that need
    discussion.
 
-No code was written and nothing was tested in a browser. Items that still need
-a hands-on check are listed under [Unverified items](#unverified-items).
+6. Test the items that reading could not settle in a throwaway spike
+   (IMPL-0001). The outcome is under [Spike results](#spike-results).
 
 <!--docz:approach:end-->
 
@@ -331,28 +331,43 @@ inheriting. A new implementation of both halves is estimated at 500 to 800
 lines of TypeScript including the options page, with the pure logic (URL
 parsing, naming, routing decisions) unit-testable without a browser.
 
-### Unverified items
+### Spike results
 
-These came from reading code and documentation, and need a hands-on spike:
+The items that could only be settled hands-on were tested in the IMPL-0001
+spike on Firefox 159.0.1, against a real access portal and real Okta
+tenants.
 
-1. The federation response shape and the account-name source on the current
-   access portal, including the newer `*.app.aws` portal hostnames.
-2. Whether `webRequest.filterResponseData` needs the extra
-   `webRequestFilterResponse` permission under MV3.
-3. How the Okta admin console obtains its session. The working assumption is
-   that `<org>-admin.okta.com` signs in through the `<org>.okta.com` session
-   in the same cookie store, so both hosts must share a container. No Okta
-   documentation was found that states this.
-4. Whether having the `contextualIdentities` permission is enough to turn the
-   containers feature on in a fresh Firefox profile.
-5. Whether unlisted signing enforces the `data_collection_permissions` key.
+1. **Federation response and account names: confirmed.** The portal page
+   calls `portal.sso.<region>.amazonaws.com`. The federation response has
+   exactly `signInToken`, `signInFederationLocation` and `destination`.
+   Account names come from the account-list response, which is a POST, not
+   a GET as first assumed. Only `<directory-id>.awsapps.com` portals were
+   available; the newer `*.app.aws` portal hostnames remain untested.
+2. **`filterResponseData` under Manifest V3: needs
+   `webRequestFilterResponse`.** Without it the call throws.
+3. **Okta admin session: works inside one container.** The admin console
+   signed in and stayed signed in within its tenant's container, and two
+   tenants stayed signed in at once. The exact redirects were not recorded.
+4. **Containers in a fresh profile: enabled by the permission alone.**
+5. **Whether unlisted signing enforces `data_collection_permissions`: not
+   tested.** Deferred to the release work; the manifest declares the key
+   either way.
+
+Two things turned out differently from what this document assumed:
+
+- The default organization label taken from the portal hostname is the
+  Identity Center directory ID, which is not readable. Editable labels are
+  a requirement.
+- Account-first names read better. The default console container name is
+  now `<account-name>(<org>) / <PermissionSet>`.
 
 <!--docz:findings:end-->
 
 <!--docz:conclusion:start-->
 ## Conclusion
 
-**Answer:** Yes (preliminary; pending the spike).
+**Answer:** Yes. Confirmed by the IMPL-0001 spike against a real access
+portal and real Okta tenants.
 
 Both halves are feasible with standard, stable WebExtension APIs and no
 dependency on another add-on. AWS is a re-implementation of a proven
@@ -473,19 +488,10 @@ unless decided otherwise.
 
 ### Next steps
 
-1. Create the public GitHub repository and push this investigation. Before
-   the first commit, check that nothing in the tree names an employer,
-   internal systems, or unrelated projects. (Checked 2026-11-12: comments
-   copied into `mise.toml` from other projects were removed; nothing else
-   found.)
-2. Set the repository up to the usual project conventions.
-3. Create a spike IMPL from this investigation, to run against a real access
-   portal and Okta admin console and close the unverified items, including
-   why tenants sign each other out without containers (which cookie is
-   shared).
-4. Write a DESIGN doc from the spike results, then the full IMPL plan.
-5. Trim `mise.toml` to what this project needs (Node, `web-ext`, formatters,
-   docz) once the toolchain is agreed.
+1. Write a DESIGN doc for the real extension, using the inputs listed at the
+   end of IMPL-0001.
+2. Write the IMPL plan for it. Release work includes the signing dry run
+   that the spike deferred.
 
 <!--docz:recommendation:end-->
 
