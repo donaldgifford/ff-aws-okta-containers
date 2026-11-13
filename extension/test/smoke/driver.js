@@ -42,7 +42,11 @@ async function registryChecks() {
       !before.some((old) => old.cookieStoreId === identity.cookieStoreId),
   );
 
-  const removed = await registry.removeUnused(browser.tabs);
+  const unused = await registry.findUnused(browser.tabs);
+  const removed = await registry.removeUnused(
+    browser.tabs,
+    unused.map((record) => record.key),
+  );
   const after = await browser.contextualIdentities.query({});
 
   return {

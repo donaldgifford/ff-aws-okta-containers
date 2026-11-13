@@ -251,7 +251,12 @@ test("an existing container with the same name is never adopted", async () => {
 
   const ours = await registry.getOrCreate(PORTAL_KEY, PORTAL_KEY);
   await registry.syncNames();
-  await registry.removeUnused(browser.tabs);
+  const unused = await registry.findUnused(browser.tabs);
+  await registry.removeUnused(browser.tabs, [
+    ...unused.map((record) => record.key),
+    // Asking for something that is not in the map removes nothing.
+    "aws-portal:not-ours.awsapps.com",
+  ]);
 
   assert.notEqual(ours, theirs.cookieStoreId);
   assert.equal(browser.calls.create, 1);
@@ -263,7 +268,26 @@ test("an existing container with the same name is never adopted", async () => {
   });
 });
 
-test("only managed containers with no open tabs are removed", async () => {
+test("only managed containers with no open tabs are offered for cleanup", async () => {
+  const { browser, registry } = setup();
+  const inUse = await registry.getOrCreate(CONSOLE_KEY, PORTAL_KEY);
+  await registry.getOrCreate(PORTAL_KEY, PORTAL_KEY);
+  await browser.tabs.create({
+    url: "https://example.com/",
+    cookieStoreId: inUse,
+  });
+
+  const unused = await registry.findUnused(browser.tabs);
+
+  assert.deepEqual(
+    unused.map((record) => record.key),
+    [PORTAL_KEY],
+  );
+  // Looking removes nothing.
+  assert.equal(browser.identities.size, 2);
+});
+
+test("cleanup removes the confirmed containers and forgets them", async () => {
   const { browser, registry } = setup();
   const inUse = await registry.getOrCreate(CONSOLE_KEY, PORTAL_KEY);
   const idle = await registry.getOrCreate(PORTAL_KEY, PORTAL_KEY);
@@ -272,13 +296,67 @@ test("only managed containers with no open tabs are removed", async () => {
     cookieStoreId: inUse,
   });
 
-  const removed = await registry.removeUnused(browser.tabs);
+  const removed = await registry.removeUnused(browser.tabs, [PORTAL_KEY]);
   await settle();
 
   assert.deepEqual(removed, [PORTAL_KEY]);
   assert.equal(browser.identities.has(idle), false);
   assert.equal(browser.identities.has(inUse), true);
   assert.deepEqual(Object.keys(browser.stored().containers), [CONSOLE_KEY]);
+});
+
+test("a container that gained a tab after the list was shown is kept", async () => {
+  const { browser, registry } = setup();
+  const cookieStoreId = await registry.getOrCreate(PORTAL_KEY, PORTAL_KEY);
+  const unused = await registry.findUnused(browser.tabs);
+  await browser.tabs.create({ url: "https://example.com/", cookieStoreId });
+
+  const removed = await registry.removeUnused(
+    browser.tabs,
+    unused.map((record) => record.key),
+  );
+
+  assert.deepEqual(removed, []);
+  assert.equal(browser.identities.has(cookieStoreId), true);
+  assert.deepEqual(Object.keys(browser.stored().containers), [PORTAL_KEY]);
+});
+
+test("a colour rule change recolours without renaming or recreating", async () => {
+  const { browser, store, registry } = setup();
+  const cookieStoreId = await registry.getOrCreate(PORTAL_KEY, PORTAL_KEY);
+
+  await store.update((state) => {
+    state.settings.colourRules = [{ match: "portal", colour: "purple" }];
+  });
+  await registry.syncNames();
+
+  assert.equal(browser.identities.get(cookieStoreId).color, "purple");
+  assert.equal(browser.identities.get(cookieStoreId).name, "acme portal");
+  assert.equal(browser.calls.create, 1);
+});
+
+test("a settings change renames only the containers it affects", async () => {
+  const { browser, store, registry } = setup();
+  const consoleStore = await registry.getOrCreate(CONSOLE_KEY, PORTAL_KEY);
+  const portalStore = await registry.getOrCreate(PORTAL_KEY, PORTAL_KEY);
+  const oktaStore = await registry.getOrCreate(
+    oktaTenant().key,
+    oktaTenant().key,
+  );
+  browser.renameByHand(consoleStore, "mine");
+
+  await store.update((state) => {
+    state.settings.portalTemplate = "{org} sso";
+    state.settings.consoleTemplate = "{role}@{account}";
+  });
+  await registry.syncNames();
+
+  // The portal is renamed, the hand-renamed console and the Okta container
+  // are not touched: one update call in all.
+  assert.equal(browser.identities.get(portalStore).name, "acme sso");
+  assert.equal(browser.identities.get(consoleStore).name, "mine");
+  assert.equal(browser.identities.get(oktaStore).name, "acme okta admin");
+  assert.equal(browser.calls.update, 1);
 });
 
 test("a malformed key is refused before anything is created", async () => {

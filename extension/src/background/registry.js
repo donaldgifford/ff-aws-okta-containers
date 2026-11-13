@@ -26,8 +26,11 @@ import { appearanceFor, orgLabelFor } from "../core/naming.js";
  *   names, except those the user renamed by hand.
  * @property {(key: string) => Promise<void>} handBack Takes over the naming
  *   of a container the user renamed by hand.
- * @property {(tabs: Pick<typeof browser.tabs, "query">) => Promise<string[]>} removeUnused
- *   Removes managed containers that have no open tabs. Returns their keys.
+ * @property {(tabs: Pick<typeof browser.tabs, "query">) => Promise<ManagedContainer[]>} findUnused
+ *   The managed containers that have no open tabs.
+ * @property {(tabs: Pick<typeof browser.tabs, "query">, keys: readonly string[]) => Promise<string[]>} removeUnused
+ *   Removes the managed containers with these keys, except any that has a
+ *   tab open by now. Returns the keys of those removed.
  */
 
 /**
@@ -260,25 +263,58 @@ export function createRegistry({ store, identities, now = () => new Date() }) {
 
   /**
    * @param {Pick<typeof browser.tabs, "query">} tabs
+   * @param {ManagedContainer} record
+   * @returns {Promise<boolean>}
+   */
+  async function isUnused(tabs, record) {
+    const open = await tabs.query({ cookieStoreId: record.cookieStoreId });
+    return open.length === 0;
+  }
+
+  /**
+   * @param {Pick<typeof browser.tabs, "query">} tabs
+   * @returns {Promise<ManagedContainer[]>}
+   */
+  async function findUnused(tabs) {
+    const state = await store.load();
+    /** @type {ManagedContainer[]} */
+    const unused = [];
+    for (const record of Object.values(state.containers)) {
+      if (await isUnused(tabs, record)) unused.push(record);
+    }
+    return unused;
+  }
+
+  /**
+   * @param {Pick<typeof browser.tabs, "query">} tabs
+   * @param {readonly string[]} keys
    * @returns {Promise<string[]>}
    */
-  async function removeUnused(tabs) {
-    const state = await store.load();
+  async function removeUnused(tabs, keys) {
     /** @type {string[]} */
     const removed = [];
-    for (const record of Object.values(state.containers)) {
-      await inTurn(record.key, async () => {
-        const open = await tabs.query({ cookieStoreId: record.cookieStoreId });
-        if (open.length > 0) return;
+    for (const key of keys) {
+      await inTurn(key, async () => {
+        // Only ever a container in the map, and only if it is still unused:
+        // a tab may have been opened in it since the list was shown.
+        const record = (await store.load()).containers[key];
+        if (!record || !(await isUnused(tabs, record))) return;
         if (await live(record.cookieStoreId)) {
           await identities.remove(record.cookieStoreId);
         }
         await forget(record.cookieStoreId);
-        removed.push(record.key);
+        removed.push(key);
       });
     }
     return removed;
   }
 
-  return { getOrCreate, forget, syncNames, handBack, removeUnused };
+  return {
+    getOrCreate,
+    forget,
+    syncNames,
+    handBack,
+    findUnused,
+    removeUnused,
+  };
 }
