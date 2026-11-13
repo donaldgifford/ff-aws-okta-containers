@@ -149,7 +149,7 @@ anything is built on them.
 - [x] Add `extension/regions.json` listing the commercial AWS regions where
       IAM Identity Center is available, with the AWS documentation page it
       was taken from.
-- [ ] Add `scripts/gen-manifest.mjs`, which writes the
+- [x] Add `scripts/gen-manifest.mjs`, which writes the
       `optional_host_permissions` list into `manifest.json` from
       `regions.json`, and a `--check` mode that fails if the two disagree.
 - [ ] Add `typescript`, `biome` and `jq` to `mise.toml`. There is no

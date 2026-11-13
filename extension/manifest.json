@@ -8,7 +8,9 @@
       "id": "ff-aws-okta-containers@donaldgifford",
       "strict_min_version": "140.0",
       "data_collection_permissions": {
-        "required": ["none"]
+        "required": [
+          "none"
+        ]
       }
     },
     "gecko_android": {
@@ -25,9 +27,51 @@
     "webRequestBlocking",
     "webRequestFilterResponse"
   ],
-  "optional_host_permissions": [],
+  "optional_host_permissions": [
+    "https://*.awsapps.com/*",
+    "https://*.app.aws/*",
+    "https://portal.sso.af-south-1.amazonaws.com/*",
+    "https://portal.sso.ap-east-1.amazonaws.com/*",
+    "https://portal.sso.ap-east-2.amazonaws.com/*",
+    "https://portal.sso.ap-northeast-1.amazonaws.com/*",
+    "https://portal.sso.ap-northeast-2.amazonaws.com/*",
+    "https://portal.sso.ap-northeast-3.amazonaws.com/*",
+    "https://portal.sso.ap-south-1.amazonaws.com/*",
+    "https://portal.sso.ap-south-2.amazonaws.com/*",
+    "https://portal.sso.ap-southeast-1.amazonaws.com/*",
+    "https://portal.sso.ap-southeast-2.amazonaws.com/*",
+    "https://portal.sso.ap-southeast-3.amazonaws.com/*",
+    "https://portal.sso.ap-southeast-4.amazonaws.com/*",
+    "https://portal.sso.ap-southeast-5.amazonaws.com/*",
+    "https://portal.sso.ap-southeast-6.amazonaws.com/*",
+    "https://portal.sso.ap-southeast-7.amazonaws.com/*",
+    "https://portal.sso.ca-central-1.amazonaws.com/*",
+    "https://portal.sso.ca-west-1.amazonaws.com/*",
+    "https://portal.sso.eu-central-1.amazonaws.com/*",
+    "https://portal.sso.eu-central-2.amazonaws.com/*",
+    "https://portal.sso.eu-north-1.amazonaws.com/*",
+    "https://portal.sso.eu-south-1.amazonaws.com/*",
+    "https://portal.sso.eu-south-2.amazonaws.com/*",
+    "https://portal.sso.eu-west-1.amazonaws.com/*",
+    "https://portal.sso.eu-west-2.amazonaws.com/*",
+    "https://portal.sso.eu-west-3.amazonaws.com/*",
+    "https://portal.sso.il-central-1.amazonaws.com/*",
+    "https://portal.sso.me-central-1.amazonaws.com/*",
+    "https://portal.sso.me-south-1.amazonaws.com/*",
+    "https://portal.sso.mx-central-1.amazonaws.com/*",
+    "https://portal.sso.sa-east-1.amazonaws.com/*",
+    "https://portal.sso.us-east-1.amazonaws.com/*",
+    "https://portal.sso.us-east-2.amazonaws.com/*",
+    "https://portal.sso.us-west-1.amazonaws.com/*",
+    "https://portal.sso.us-west-2.amazonaws.com/*",
+    "https://*.okta.com/*",
+    "https://*.oktapreview.com/*",
+    "https://*.okta-emea.com/*"
+  ],
   "background": {
-    "scripts": ["src/background/index.js"],
+    "scripts": [
+      "src/background/index.js"
+    ],
     "type": "module"
   },
   "action": {
