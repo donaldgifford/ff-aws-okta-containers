@@ -152,7 +152,7 @@ anything is built on them.
 - [x] Add `scripts/gen-manifest.mjs`, which writes the
       `optional_host_permissions` list into `manifest.json` from
       `regions.json`, and a `--check` mode that fails if the two disagree.
-- [ ] Add `typescript`, `biome` and `jq` to `mise.toml`. There is no
+- [x] Add `typescript`, `biome` and `jq` to `mise.toml`. There is no
       `package.json`, lockfile or `node_modules` in the repository.
 - [ ] Add a `jsconfig.json` that turns on strict checking of JavaScript,
       and `extension/types/browser.d.ts`: hand-written declarations for

@@ -37,6 +37,12 @@ shfmt = "latest"
 # Extension tooling
 # renovate: datasource=npm depName=web-ext
 "npm:web-ext" = "10.8.0"
+# renovate: datasource=npm depName=typescript
+"npm:typescript" = "6.0.3"
+# renovate: datasource=github-releases depName=biomejs/biome
+biome = "2.6.7"
+# renovate: datasource=github-releases depName=jqlang/jq
+jq = "1.8.2"
 
 # Security
 # renovate: datasource=github-releases depName=trufflesecurity/trufflehog
