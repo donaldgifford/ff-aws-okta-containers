@@ -228,7 +228,7 @@ browser APIs. This is the bulk of the test suite.
       (`account_id`, `role_name`); parse and validate the response body;
       validate the sign-in host; choose the destination; build the sign-in
       URL.
-- [ ] `core/accounts.js`: extract account IDs and names from an
+- [x] `core/accounts.js`: extract account IDs and names from an
       account-list response body.
 - [x] `core/naming.js`: render name templates from tokens; apply colour
       rules with a stable-hash fallback; fixed icon per kind; validate a
