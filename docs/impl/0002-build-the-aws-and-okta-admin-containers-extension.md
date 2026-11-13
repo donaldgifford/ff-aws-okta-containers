@@ -319,7 +319,7 @@ can be given access to a portal or tenant, but does not yet act on it.
 <!--docz:tasks:start-->
 #### Tasks
 
-- [ ] Toolbar button: on click, read the current tab's address through
+- [x] Toolbar button: on click, read the current tab's address through
       `activeTab` and open the options page, on the add form with the
       address filled in when it is an unenrolled portal or Okta admin
       console.
@@ -337,7 +337,7 @@ can be given access to a portal or tenant, but does not yet act on it.
       remove.
 - [x] Removing an organization revokes its addresses, keeping a region's
       API address while another enrolled portal uses it.
-- [ ] Listen for `permissions.onRemoved` and `onAdded`, and re-check with
+- [x] Listen for `permissions.onRemoved` and `onAdded`, and re-check with
       `permissions.contains` at startup, so a grant changed in the add-on
       manager is reflected.
 - [x] Unit tests for the enrolment decisions: which addresses to request,
