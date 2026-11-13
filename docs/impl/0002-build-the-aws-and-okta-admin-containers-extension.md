@@ -577,7 +577,7 @@ use and test it. Nothing in this phase involves Mozilla.
       `about:debugging`, what has to be redone after a Firefox restart, how
       to enrol a portal and a tenant, what access it holds and why, and
       how to remove it.
-- [ ] Add an icon drawn for this project, for the toolbar button and the
+- [x] Add an icon drawn for this project, for the toolbar button and the
       add-on manager.
 - [ ] Set the committed manifest version to `0.1.0`.
 - [ ] `just package <version>`: copy `extension/` without its tests to a
