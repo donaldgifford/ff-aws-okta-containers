@@ -1,0 +1,5 @@
+{
+  "signInToken": "EXAMPLE-TOKEN",
+  "signInFederationLocation": "https://signin.aws.amazon.com.example.com/federation",
+  "destination": "https://console.aws.amazon.com/"
+}

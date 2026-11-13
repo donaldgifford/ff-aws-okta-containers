@@ -224,7 +224,7 @@ browser APIs. This is the bulk of the test suite.
       domains.
 - [x] `core/routing.js`: request facts (method, tab container, private
       window, target, settings) to a decision with a reason.
-- [ ] `core/federation.js`: validate the request parameters
+- [x] `core/federation.js`: validate the request parameters
       (`account_id`, `role_name`); parse and validate the response body;
       validate the sign-in host; choose the destination; build the sign-in
       URL.
