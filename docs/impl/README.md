@@ -35,5 +35,6 @@ docz create impl "Your Implementation Title"
 | ID | Title | Status | Date | Author | Link |
 | --- | --- | --- | --- | --- | --- |
 | IMPL-0001 | Spike: validate AWS and Okta container interception | Completed | 2026-11-12 | Donald Gifford | [0001-spike-validate-aws-and-okta-container-interception.md](0001-spike-validate-aws-and-okta-container-interception.md) |
+| IMPL-0002 | Build the AWS and Okta admin containers extension | Draft | 2026-11-13 | Donald Gifford | [0002-build-the-aws-and-okta-admin-containers-extension.md](0002-build-the-aws-and-okta-admin-containers-extension.md) |
 <!-- markdownlint-restore -->
 <!-- END DOCZ AUTO-GENERATED -->

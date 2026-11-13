@@ -654,7 +654,7 @@ the properties the design guarantees, and how each is enforced.
 | Never logs or stores a token | The sign-in token exists only in a local variable and the opened tab's URL. Logging helpers accept field names, never response values. |
 | Opens only AWS sign-in URLs | `signInFederationLocation` must be `https:` on `signin.aws.amazon.com` or a region subdomain of it. Anything else is released to the page untouched. |
 | Never widens where a session lands | A failure releases the response to the page, so the session ends up where it would have without the extension. It is never sent to a different, wrong container. |
-| Ships no third-party runtime code | Zero runtime dependencies. Development dependencies (tests, type checking, `web-ext`) are pinned with a lockfile and updated through Renovate. |
+| Ships no third-party runtime code | Zero runtime dependencies. There is no `package.json`. Development tools (type checking, linting, `web-ext`) are pinned in `mise.toml` and updated through Renovate. |
 | Touches no site the user has not enrolled | No host access is granted at install. Each portal's two addresses, and each Okta tenant's admin address, are granted through a Firefox prompt that names them. |
 | Stores no secrets | Storage holds labels, templates, rules, the container map and account names. |
 
@@ -815,10 +815,10 @@ map is never exported or synced.
 
 | Layer | What it covers | How |
 | ----- | -------------- | --- |
-| Unit | Classification, routing decisions, federation parsing and validation, sign-in URL building, naming, colour rules, schema migrations | Vitest against the pure core, with sanitized fixtures. Runs in CI. |
-| Registry | Get-or-create, rename, hand-rename detection, removal, the per-key lock | Vitest with a small in-memory fake of the `contextualIdentities` and `storage` APIs. Runs in CI. |
+| Unit | Classification, routing decisions, federation parsing and validation, sign-in URL building, naming, colour rules, schema migrations | Node's built-in test runner against the pure core, with sanitized fixtures. Runs in CI. |
+| Registry | Get-or-create, rename, hand-rename detection, removal, the per-key lock | Node's built-in test runner with a small in-memory fake of the `contextualIdentities` and `storage` APIs. Runs in CI. |
 | Source checks | No network calls, no cookies API, no `eval`; JSDoc types hold | A script over the extension source, and `tsc` in check-only mode. Runs in CI. |
-| Smoke | The extension loads in headless Firefox with no errors, and creates then reuses a container | `web-ext run` headless, as the spike did. Runs in CI. |
+| Smoke | The extension loads in headless Firefox with no errors, and creates then reuses a container | `web-ext run` headless, as the spike did. Run locally, not in CI. |
 | Manual | The real flows against a real portal and real Okta tenants | A checklist in the repository, run before each release. |
 
 Cases the unit tests must include, each taken from something the spike or
@@ -863,11 +863,14 @@ are deleted by hand once.
 | 3. AWS consoles | Enrolment, federation hand-off and account names | Manual checklist passes for consoles |
 | 4. Portals and Okta | Navigation routing for both | Manual checklist passes for all three kinds; `spike/` deleted |
 | 5. Options page | Labels, templates, colours, switches, managed-container list, export and import | Editing a label renames containers in place |
-| 6. First signed release | Unlisted signing in the release workflow, signed `.xpi` attached to the GitHub release | Signed build installs in release Firefox and survives a restart |
-| 7. Listing | Public listing in the Mozilla add-ons directory | Decided after the signed build has been in daily use |
+| 6. Daily-use build | Manual checklist, README, icon, `just package`; version `0.1.0` tagged | Loaded by hand from a checkout, the extension passes the checklist in full |
+| Deferred: signing | Unlisted signing in the release workflow, signed `.xpi` attached to the GitHub release | Taken up after a period of daily use; see IMPL-0002 |
+| Deferred: listing | Public listing in the Mozilla add-ons directory | Decided after signing |
 
 Each step is one or more pull requests. Steps 1 to 5 release nothing
-(`dont-release`). Step 6 is the first version.
+(`dont-release`). Step 6 is the first version. Until signing is done, the
+extension is loaded from `about:debugging` and has to be loaded again
+after each Firefox restart.
 
 Rollback at any point is uninstalling the extension. Containers it created
 remain, with their sessions, and can be removed in Firefox's container
