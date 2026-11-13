@@ -154,7 +154,7 @@ anything is built on them.
       `regions.json`, and a `--check` mode that fails if the two disagree.
 - [x] Add `typescript`, `biome` and `jq` to `mise.toml`. There is no
       `package.json`, lockfile or `node_modules` in the repository.
-- [ ] Add a `jsconfig.json` that turns on strict checking of JavaScript,
+- [x] Add a `jsconfig.json` that turns on strict checking of JavaScript,
       and `extension/types/browser.d.ts`: hand-written declarations for
       only the `browser.*` calls the extension makes, each with a link to
       its MDN page.
