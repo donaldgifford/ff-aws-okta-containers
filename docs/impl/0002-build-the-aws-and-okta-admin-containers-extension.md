@@ -230,7 +230,7 @@ browser APIs. This is the bulk of the test suite.
       URL.
 - [ ] `core/accounts.js`: extract account IDs and names from an
       account-list response body.
-- [ ] `core/naming.js`: render name templates from tokens; apply colour
+- [x] `core/naming.js`: render name templates from tokens; apply colour
       rules with a stable-hash fallback; fixed icon per kind; validate a
       template and a rule.
 - [ ] `core/enrol.js`: turn a typed or captured address into an enrolment
