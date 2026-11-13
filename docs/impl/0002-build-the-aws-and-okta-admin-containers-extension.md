@@ -160,7 +160,7 @@ anything is built on them.
       its MDN page.
 - [x] Add a `biome.json` that lints and formats `extension/` and
       `scripts/`.
-- [ ] Tests run with `node --test` and Node's built-in assertions.
+- [x] Tests run with `node --test` and Node's built-in assertions.
 - [ ] Add `scripts/check-source.mjs`, which fails if anything under
       `extension/src` uses `fetch`, `XMLHttpRequest`, `WebSocket`,
       `sendBeacon`, `eval`, `new Function`, or `browser.cookies`.

@@ -61,4 +61,7 @@ async function main() {
   console.log(`wrote ${wanted.length} optional host permissions`);
 }
 
-await main();
+// Run only when executed directly, so tests can import the helper above.
+if (import.meta.main) {
+  await main();
+}
