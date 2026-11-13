@@ -3,9 +3,11 @@
 // or template changes.
 
 import { refreshAccess } from "../background/access.js";
+import { reopenInContainer } from "../background/navigation.js";
 import { createRegistry } from "../background/registry.js";
 import { createStore } from "../storage/store.js";
 import { byId, errorMessage } from "./dom.js";
+import { createNoticeBanner } from "./notice.js";
 import { createOrganizationsSection } from "./organizations.js";
 
 const store = createStore(browser.storage.local);
@@ -15,8 +17,31 @@ const registry = createRegistry({
 });
 const pageError = byId("page-error", HTMLElement);
 
-const organizations = createOrganizationsSection({ store, registry });
-const sections = [organizations];
+const query = new URLSearchParams(location.search);
+
+const organizations = createOrganizationsSection({
+  store,
+  registry,
+  // Enrolment started from the toolbar button on a portal or admin console:
+  // now that it is enrolled, reopen that tab in its new container.
+  onEnrolled: async (organization) => {
+    const tabId = Number(query.get("tab"));
+    if (!query.has("tab") || !Number.isInteger(tabId)) return;
+    await reopenInContainer(
+      {
+        store,
+        registry,
+        tabs: browser.tabs,
+        reportFailure: (what) => (error) => {
+          console.error(`[containers] ${what}: ${errorMessage(error)}`);
+        },
+      },
+      tabId,
+      organization,
+    );
+  },
+});
+const sections = [createNoticeBanner({ store }), organizations];
 
 async function render() {
   try {
@@ -37,7 +62,7 @@ browser.storage.onChanged.addListener((_changes, areaName) => {
 
 // The toolbar button opens this page with the address of the tab it was
 // clicked on, when that tab is a portal or tenant that is not enrolled yet.
-const offered = new URLSearchParams(location.search).get("add");
+const offered = query.get("add");
 if (offered) organizations.offer(offered);
 
 // A grant may have been changed in the add-on manager since the last look.

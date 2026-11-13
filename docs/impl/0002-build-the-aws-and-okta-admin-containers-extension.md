@@ -429,16 +429,16 @@ container. After this phase the extension does everything the spike did.
 <!--docz:tasks:start-->
 #### Tasks
 
-- [ ] Routing listener on top-level requests: gather the request facts,
+- [x] Routing listener on top-level requests: gather the request facts,
       call `core/routing.js`, and on a move decision open the URL in the
       target's container and cancel the original request.
-- [ ] Close the source tab only when it was empty.
-- [ ] On any failure to create the container or open the tab, let the
+- [x] Close the source tab only when it was empty.
+- [x] On any failure to create the container or open the tab, let the
       original request proceed.
-- [ ] Respect the "AWS access portals" and "Okta admin consoles" switches.
-- [ ] After enrolment succeeds, reopen the tab it was started from in its
+- [x] Respect the "AWS access portals" and "Okta admin consoles" switches.
+- [x] After enrolment succeeds, reopen the tab it was started from in its
       new container.
-- [ ] Unit tests for the listener glue: move, each leave-alone reason, and
+- [x] Unit tests for the listener glue: move, each leave-alone reason, and
       the failure path.
 - [ ] By hand: a portal and two Okta tenants from ordinary tabs; sign-in
       completing inside each container; two tenants and two portals signed
