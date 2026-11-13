@@ -467,7 +467,7 @@ container. After this phase the extension does everything the spike did.
       new container.
 - [x] Unit tests for the listener glue: move, each leave-alone reason, and
       the failure path.
-- [ ] Waiting on you (the "(real)" items in `extension/TESTING.md`, section 3; the rest of this list was run against a headless Firefox 160 and passed): By hand: a portal and two Okta tenants from ordinary tabs; sign-in
+- [ ] Waiting on you for sign-in, several sessions at once and the Okta dashboard tile (the "(real)" items in `extension/TESTING.md`, section 3). Routing a portal and a tenant from ordinary tabs, `<org>.okta.com` not moving, and a tab already in another container staying there were run against a headless Firefox 160 and passed: By hand: a portal and two Okta tenants from ordinary tabs; sign-in
       completing inside each container; two tenants and two portals signed
       in at once; `<org>.okta.com` not moving; a portal launched from an
       Okta dashboard tile in an ordinary tab; a portal opened from inside
