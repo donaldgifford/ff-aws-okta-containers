@@ -217,6 +217,11 @@ button:disabled {
   color: var(--warn);
 }
 
+.banner time {
+  display: block;
+  margin: 0;
+}
+
 /* Last, so it wins over the display rules above. */
 [hidden] {
   display: none;

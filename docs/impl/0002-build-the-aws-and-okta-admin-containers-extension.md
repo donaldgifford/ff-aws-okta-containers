@@ -373,7 +373,7 @@ portals.
 <!--docz:tasks:start-->
 #### Tasks
 
-- [ ] `background/index.js`: register every listener synchronously at the
+- [x] `background/index.js`: register every listener synchronously at the
       top level, using the result of the phase 1 check to decide whether
       they are re-registered when access is granted.
 - [x] Federation listener: match `GET /federation/console` with both
@@ -388,7 +388,7 @@ portals.
 - [x] When a name arrives for an account whose container is named with the
       account ID, rename the container in place.
 - [x] Use the portal's label as `{org}` in the container name.
-- [ ] Warning badge on the toolbar button after a failed hand-off, with the
+- [x] Warning badge on the toolbar button after a failed hand-off, with the
       reason in the tooltip and on the options page; cleared when viewed.
 - [x] Wrong-region warning: a shortcut tab in an enrolled portal's
       container with no federation request seen within a few seconds.
