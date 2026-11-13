@@ -387,3 +387,18 @@ test("a failed creation does not block the next attempt", async () => {
     /^firefox-container-/,
   );
 });
+
+test("a colour Firefox reports under another name is not set again on every use", async () => {
+  const { browser, store, registry } = setup((state) => {
+    state.settings.colourRules = [{ match: "portal", colour: "turquoise" }];
+  });
+
+  const cookieStoreId = await registry.getOrCreate(PORTAL_KEY, PORTAL_KEY);
+  // Firefox 160 reports "turquoise" as "cyan".
+  assert.equal(browser.identities.get(cookieStoreId).color, "cyan");
+  await registry.getOrCreate(PORTAL_KEY, PORTAL_KEY);
+  await registry.syncNames();
+
+  assert.equal(browser.calls.update, 0);
+  assert.equal((await store.load()).containers[PORTAL_KEY].userRenamed, false);
+});

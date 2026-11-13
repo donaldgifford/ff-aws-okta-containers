@@ -20,6 +20,25 @@ export const COLOURS = Object.freeze([
   "purple",
 ]);
 
+// Firefox renamed "turquoise" to "cyan" at some point after version 140. It
+// still accepts "turquoise" and reports it back as "cyan", so the extension
+// keeps asking for "turquoise", which every supported version accepts, and
+// treats the two as the same colour when comparing.
+const COLOUR_ALIASES = Object.freeze(
+  /** @type {Record<string, string>} */ ({ cyan: "turquoise" }),
+);
+
+/**
+ * @param {string} first
+ * @param {string} second
+ * @returns {boolean} Whether two colour names mean the same colour.
+ */
+export function sameColour(first, second) {
+  return (
+    (COLOUR_ALIASES[first] ?? first) === (COLOUR_ALIASES[second] ?? second)
+  );
+}
+
 /** @type {Readonly<Record<TargetKind, string>>} */
 export const ICONS = Object.freeze({
   "aws-console": "dollar",

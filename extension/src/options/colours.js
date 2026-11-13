@@ -13,17 +13,17 @@ import {
 } from "../core/naming.js";
 import { byId, errorMessage, h, setStatus } from "./dom.js";
 
-/** The colours Firefox draws its containers in, for the swatches. */
+/** Roughly the colours Firefox draws its containers in, for the swatches. */
 const SWATCHES = Object.freeze(
   /** @type {Record<string, string>} */ ({
-    blue: "#37adff",
-    turquoise: "#00c79a",
-    green: "#51cd00",
-    yellow: "#ffcb00",
-    orange: "#ff9f00",
-    red: "#ff613d",
-    pink: "#ff4bda",
-    purple: "#af51f5",
+    blue: "#5a87fd",
+    turquoise: "#10a4ca",
+    green: "#11ae84",
+    yellow: "#db820e",
+    orange: "#f4682c",
+    red: "#ed566e",
+    pink: "#db54bf",
+    purple: "#b864ee",
   }),
 );
 

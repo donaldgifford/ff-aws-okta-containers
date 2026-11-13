@@ -3,6 +3,9 @@
 // toolbar button and response filters. It keeps just enough behaviour for
 // the tests and records nothing else.
 
+// Firefox 160 reports the colour it was given as "turquoise" as "cyan".
+const reported = (color) => (color === "turquoise" ? "cyan" : color);
+
 function createEvent() {
   const listeners = new Set();
   return {
@@ -42,7 +45,7 @@ export function createFakeBrowser({ storage = {}, origins = [] } = {}) {
       const identity = {
         cookieStoreId: `firefox-container-${nextIdentity}`,
         name,
-        color,
+        color: reported(color),
         icon,
       };
       nextIdentity += 1;
@@ -61,6 +64,7 @@ export function createFakeBrowser({ storage = {}, origins = [] } = {}) {
       if (!identity)
         throw new Error(`Invalid contextual identity: ${cookieStoreId}`);
       Object.assign(identity, details);
+      identity.color = reported(identity.color);
       return { ...identity };
     },
     async remove(cookieStoreId) {

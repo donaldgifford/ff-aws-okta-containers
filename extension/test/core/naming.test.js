@@ -10,6 +10,7 @@ import {
   ICONS,
   orgLabelFor,
   renderTemplate,
+  sameColour,
   validateColourRule,
   validateTemplate,
 } from "../../src/core/naming.js";
@@ -157,4 +158,11 @@ test("an organization that is no longer enrolled is labelled from its address", 
     "gone",
   );
   assert.equal(orgLabelFor(null, organizations), "unknown");
+});
+
+test("turquoise and cyan are the same colour", () => {
+  assert.equal(sameColour("turquoise", "cyan"), true);
+  assert.equal(sameColour("cyan", "turquoise"), true);
+  assert.equal(sameColour("red", "red"), true);
+  assert.equal(sameColour("red", "pink"), false);
 });

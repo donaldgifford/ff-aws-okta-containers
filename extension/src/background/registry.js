@@ -11,7 +11,7 @@
 /** @import { Store } from "../storage/store.js" */
 
 import { parseKey } from "../core/keys.js";
-import { appearanceFor, orgLabelFor } from "../core/naming.js";
+import { appearanceFor, orgLabelFor, sameColour } from "../core/naming.js";
 
 /**
  * @typedef {object} Registry
@@ -119,7 +119,7 @@ export function createRegistry({ store, identities, now = () => new Date() }) {
     }
     const upToDate =
       identity.name === appearance.name &&
-      identity.color === appearance.color &&
+      sameColour(identity.color, appearance.color) &&
       identity.icon === appearance.icon;
     if (!upToDate) await identities.update(record.cookieStoreId, appearance);
     return { managedName: appearance.name, userRenamed: false };
