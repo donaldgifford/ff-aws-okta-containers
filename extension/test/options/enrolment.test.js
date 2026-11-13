@@ -199,3 +199,65 @@ test("checking access writes nothing when nothing changed", async () => {
   assert.deepEqual(await refreshAccess({ store, permissions }), []);
   assert.equal(browser.calls.storageSet, writes);
 });
+
+// Giving up an address makes the background script re-check access and
+// write what it finds, from its own copy of the store. These two tests pin
+// the order that keeps that write from undoing the options page's change.
+function withBackground(organizations) {
+  const context = setup(organizations);
+  const background = createStore(context.browser.storage.local);
+  context.browser.storage.onChanged.addListener(() => background.invalidate());
+  /** @type {Promise<unknown>[]} */
+  const checks = [];
+  context.browser.permissions.onRemoved.addListener(() => {
+    checks.push(
+      refreshAccess({ store: background, permissions: context.permissions }),
+    );
+  });
+  return { ...context, checks };
+}
+
+test("a removed organization is not written back by the background's access check", async () => {
+  const { browser, store, permissions, checks } = withBackground([
+    portal(),
+    oktaTenant(),
+  ]);
+  /** @type {string[][]} */
+  const storedWhenRevoked = [];
+  const remove = permissions.remove;
+  permissions.remove = async (details) => {
+    storedWhenRevoked.push(Object.keys(browser.stored().organizations));
+    return remove(details);
+  };
+
+  await removeOrganization({ store, permissions }, oktaTenant().key);
+  await Promise.all(checks);
+
+  assert.deepEqual(storedWhenRevoked, [[portal().key]]);
+  assert.deepEqual(Object.keys(browser.stored().organizations), [portal().key]);
+  assert.equal(
+    browser.stored().organizations[portal().key].accessGranted,
+    true,
+  );
+});
+
+test("a region change is not undone by the background's access check", async () => {
+  const { browser, store, permissions, checks } = withBackground([portal()]);
+  browser.grant(...originsForRegion("eu-west-1"));
+  /** @type {(string | null)[]} */
+  const regionWhenRevoked = [];
+  const remove = permissions.remove;
+  permissions.remove = async (details) => {
+    regionWhenRevoked.push(browser.stored().organizations[portal().key].region);
+    return remove(details);
+  };
+
+  await changeRegion({ store, permissions }, portal().key, "eu-west-1");
+  await Promise.all(checks);
+
+  assert.deepEqual(regionWhenRevoked, ["eu-west-1"]);
+  assert.deepEqual(
+    browser.stored().organizations[portal().key],
+    portal({ region: "eu-west-1" }),
+  );
+});

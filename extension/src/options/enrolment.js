@@ -46,6 +46,11 @@ export async function saveOrganization(store, enrolment, label, now) {
  * Removes an organization and gives up its addresses. A region's API
  * address is kept while another enrolled portal still uses it.
  *
+ * The record is deleted before the addresses are given up. Giving them up
+ * makes the background script re-check access and write what it finds; if
+ * the record were still there, that write could land after the delete and
+ * bring the organization back.
+ *
  * @param {Dependencies} dependencies
  * @param {string} key
  * @returns {Promise<void>}
@@ -59,10 +64,10 @@ export async function removeOrganization({ store, permissions }, key) {
     organization,
     Object.values(state.organizations),
   );
-  if (origins.length > 0) await permissions.remove({ origins });
   await store.update((draft) => {
     delete draft.organizations[key];
   });
+  if (origins.length > 0) await permissions.remove({ origins });
 }
 
 /**
@@ -93,6 +98,9 @@ export function originsForRegion(region) {
  * region's API address, and gives up the old one unless another portal
  * still uses it.
  *
+ * The new region is saved before the old address is given up, for the same
+ * reason removeOrganization deletes first.
+ *
  * @param {Dependencies} dependencies
  * @param {string} key
  * @param {string} region
@@ -113,11 +121,11 @@ export async function changeRegion({ store, permissions }, key, region) {
   const origins = originsFor(organization).filter(
     (origin) => !stillNeeded.has(origin),
   );
-  if (origins.length > 0) await permissions.remove({ origins });
   await store.update((draft) => {
     const current = draft.organizations[key];
     if (current) current.region = region;
   });
+  if (origins.length > 0) await permissions.remove({ origins });
 }
 
 /**
