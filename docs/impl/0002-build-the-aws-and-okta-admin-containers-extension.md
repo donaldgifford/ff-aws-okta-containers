@@ -164,7 +164,7 @@ anything is built on them.
 - [x] Add `scripts/check-source.mjs`, which fails if anything under
       `extension/src` uses `fetch`, `XMLHttpRequest`, `WebSocket`,
       `sendBeacon`, `eval`, `new Function`, or `browser.cookies`.
-- [ ] Add a headless load test under `extension/test/smoke/`: copy the
+- [x] Add a headless load test under `extension/test/smoke/`: copy the
       extension to a temporary directory, append a test driver, run it
       with `web-ext` in headless Firefox, and assert that it loaded with no
       errors. The driver lives only in the test directory.
