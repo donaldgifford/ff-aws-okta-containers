@@ -34,5 +34,6 @@ docz create design "Your Design Title"
 <!-- markdownlint-disable MD013 -->
 | ID | Title | Status | Date | Author | Link |
 | --- | --- | --- | --- | --- | --- |
+| DESIGN-0001 | Automatic AWS and Okta admin containers extension | Approved | 2026-11-12 | Donald Gifford | [0001-automatic-aws-and-okta-admin-containers-extension.md](0001-automatic-aws-and-okta-admin-containers-extension.md) |
 <!-- markdownlint-restore -->
 <!-- END DOCZ AUTO-GENERATED -->
