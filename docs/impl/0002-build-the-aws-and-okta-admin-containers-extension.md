@@ -168,7 +168,7 @@ anything is built on them.
       extension to a temporary directory, append a test driver, run it
       with `web-ext` in headless Firefox, and assert that it loaded with no
       errors. The driver lives only in the test directory.
-- [ ] Add `just` recipes `typecheck`, `test`, `js-lint`, `source-check`,
+- [x] Add `just` recipes `typecheck`, `test`, `js-lint`, `source-check`,
       `manifest-check`, `ext-lint`, `ext-run`, `smoke` and `package`, and
       make `just check` run all but `ext-run`, `smoke` and `package`.
 - [ ] Add CI jobs for everything `just check` runs, and an `extension` path

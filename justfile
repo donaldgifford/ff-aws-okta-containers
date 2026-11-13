@@ -15,7 +15,7 @@ lint: lint-md lint-yaml lint-actions lint-shell spike-lint
 # Lint Markdown
 [group('lint')]
 lint-md:
-    @markdownlint-cli2 "**/*.md" "#node_modules" "#CHANGELOG.md"
+    @markdownlint-cli2 "**/*.md" "#node_modules" "#.claude" "#CHANGELOG.md"
 
 # Lint YAML
 [group('lint')]
@@ -38,6 +38,67 @@ fmt:
     @prettier --write "**/*.md" "!CHANGELOG.md"
     @yamlfmt .
     @shfmt -w -i 2 scripts/*.sh
+    @biome check --write .
+
+# ─── Extension ──────────────────────────────────────────────────────
+
+# Type-check the extension's JavaScript
+[group('extension')]
+typecheck:
+    @tsc -p jsconfig.json
+
+# Run the unit tests
+[group('extension')]
+test:
+    @node --test "extension/test/**/*.test.js"
+
+# Lint and check the formatting of JavaScript and JSON
+[group('extension')]
+js-lint:
+    @biome check .
+
+# Check the extension source for calls it must never make
+[group('extension')]
+source-check:
+    @node scripts/check-source.mjs
+
+# Check that manifest.json matches regions.json
+[group('extension')]
+manifest-check:
+    @node scripts/gen-manifest.mjs --check
+
+# Lint the extension the way Mozilla does
+[group('extension')]
+ext-lint:
+    @web-ext lint --source-dir extension --warnings-as-errors
+
+# Run the extension in a fresh temporary Firefox profile
+[group('extension')]
+ext-run:
+    @web-ext run --source-dir extension
+
+# Load the extension in headless Firefox and check that it starts (local only)
+[group('extension')]
+smoke:
+    @node extension/test/smoke/run.mjs
+
+# Build dist/ff-aws-okta-containers-<version>.zip, e.g. `just package 0.1.0`
+[group('extension')]
+package version:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    if [[ ! "{{ version }}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+      echo "version must look like 1.2.3" >&2
+      exit 1
+    fi
+    work="$(mktemp -d)"
+    trap 'rm -rf "$work"' EXIT
+    cp -R extension/. "$work/"
+    rm -rf "$work/test" "$work/types"
+    jq --arg version "{{ version }}" '.version = $version' \
+      extension/manifest.json > "$work/manifest.json"
+    web-ext build --source-dir "$work" --artifacts-dir dist --overwrite-dest \
+      --filename "ff-aws-okta-containers-{{ version }}.zip"
 
 # ─── Spike ──────────────────────────────────────────────────────────
 
@@ -77,4 +138,4 @@ labels *args:
 
 # Everything CI runs
 [group('repo')]
-check: lint docs-validate
+check: lint docs-validate typecheck test js-lint source-check manifest-check ext-lint
