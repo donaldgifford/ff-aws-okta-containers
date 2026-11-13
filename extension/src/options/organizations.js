@@ -6,10 +6,12 @@
 /** @import { State } from "../storage/schema.js" */
 /** @import { Store } from "../storage/store.js" */
 
+import { refreshAccess } from "../background/access.js";
 import { parseOktaHost } from "../core/classify.js";
 import {
   ENROL_FAILURES,
   originsFor,
+  originsNeeded,
   planEnrolment,
   recogniseAddress,
   validateLabel,
@@ -48,7 +50,15 @@ export function createOrganizationsSection({ store, registry, onEnrolled }) {
   const origins = byId("add-origins", HTMLUListElement);
   const addButton = byId("add-button", HTMLButtonElement);
   const addStatus = byId("add-status", HTMLElement);
+  const grantAll = byId("grant-all", HTMLElement);
+  const grantAllText = byId("grant-all-text", HTMLElement);
+  const grantAllButton = byId("grant-all-button", HTMLButtonElement);
   const permissions = browser.permissions;
+
+  // The addresses "grant access to all" asks for, kept ready so the click
+  // handler has nothing to wait for before asking.
+  /** @type {string[]} */
+  let needed = [];
 
   // What the list last showed, so an unrelated storage change does not
   // rebuild it under the user's hands.
@@ -138,6 +148,17 @@ export function createOrganizationsSection({ store, registry, onEnrolled }) {
       refreshForm();
       await onEnrolled?.(organization);
       return `Added ${organization.label}.`;
+    });
+  });
+
+  grantAllButton.addEventListener("click", () => {
+    if (needed.length === 0) return;
+    // Straight from the click; see the Add button.
+    const granted = permissions.request({ origins: needed });
+    run(listStatus, async () => {
+      const allowed = await granted;
+      await refreshAccess({ store, permissions });
+      return allowed ? "Access granted." : "Firefox did not grant access.";
     });
   });
 
@@ -293,6 +314,14 @@ export function createOrganizationsSection({ store, registry, onEnrolled }) {
       : undefined;
     list.replaceChildren(...organizations.map(card));
     empty.hidden = organizations.length > 0;
+
+    needed = originsNeeded(organizations);
+    const waiting = organizations.filter((item) => !item.accessGranted).length;
+    grantAll.hidden = waiting === 0;
+    grantAllText.textContent =
+      waiting === 1
+        ? "One organization needs access before the extension can handle it."
+        : `${waiting} organizations need access before the extension can handle them.`;
     if (focused) {
       (document.getElementById(focused) ?? listStatus).focus();
     }

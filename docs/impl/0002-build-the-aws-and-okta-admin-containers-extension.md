@@ -579,14 +579,17 @@ use and test it. Nothing in this phase involves Mozilla.
       how to remove it.
 - [x] Add an icon drawn for this project, for the toolbar button and the
       add-on manager.
-- [ ] Set the committed manifest version to `0.1.0`.
-- [ ] `just package <version>`: copy `extension/` without its tests to a
+- [x] Set the committed manifest version to `0.1.0`.
+- [x] `just package <version>`: copy `extension/` without its tests to a
       build directory, set the version in the copy with `jq`, and produce
       a `.zip` with `web-ext build`.
-- [ ] Based on the phase 1 restart check, make the after-restart routine as
+- [x] Based on the phase 1 restart check, make the after-restart routine as
       short as it can be: one reload from `about:debugging`, and if access
       is lost, one button on the options page that asks for every enrolled
-      organization's access again.
+      organization's access again. The restart check showed that settings,
+      access and containers all survive, so the routine is the one reload.
+      The button is there for the cases where access is missing anyway:
+      after an import, or after grants were removed in the add-on manager.
 - [ ] Run the full manual checklist against the extension loaded from a
       clean checkout of `main`.
 - [ ] Merge the final pull request with the `minor` label, so the release

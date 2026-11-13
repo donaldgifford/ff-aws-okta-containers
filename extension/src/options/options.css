@@ -223,6 +223,10 @@ button:disabled {
   color: var(--warn);
 }
 
+.banner p {
+  margin: 0 0 0.5rem;
+}
+
 .banner time {
   display: block;
   margin: 0;

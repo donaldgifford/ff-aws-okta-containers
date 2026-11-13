@@ -211,6 +211,18 @@ export function enrolmentOffer(tabUrl, organizations) {
 }
 
 /**
+ * Every address to ask for in one prompt so that all the organizations
+ * lacking access have it again.
+ *
+ * @param {readonly Organization[]} organizations
+ * @returns {string[]} Empty if nothing needs access.
+ */
+export function originsNeeded(organizations) {
+  const waiting = organizations.filter((item) => !item.accessGranted);
+  return [...new Set(waiting.flatMap(originsFor))].sort();
+}
+
+/**
  * @param {string} label
  * @returns {string | null} What is wrong with the label, or null.
  */

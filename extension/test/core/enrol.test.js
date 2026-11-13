@@ -8,6 +8,7 @@ import {
   enrolmentOffer,
   isApiUrl,
   originsFor,
+  originsNeeded,
   originsToRevoke,
   planEnrolment,
   recogniseAddress,
@@ -247,4 +248,31 @@ test("only portal API hosts count as the portal API", () => {
   ]) {
     assert.equal(isApiUrl(url), false, url);
   }
+});
+
+test("one request covers every organization that lacks access", () => {
+  const other = portal({
+    key: "aws-portal:d-0987654321.awsapps.com",
+    host: "d-0987654321.awsapps.com",
+    accessGranted: false,
+  });
+  const organizations = [
+    portal({ accessGranted: false }),
+    other,
+    oktaTenant(),
+    oktaTenant({
+      key: "okta-admin:other.okta.com",
+      host: "other.okta.com",
+      accessGranted: false,
+    }),
+  ];
+
+  assert.deepEqual(originsNeeded(organizations), [
+    "https://d-0987654321.awsapps.com/*",
+    `https://${PORTAL_HOST}/*`,
+    "https://other-admin.okta.com/*",
+    // Shared by both portals, asked for once.
+    "https://portal.sso.us-west-2.amazonaws.com/*",
+  ]);
+  assert.deepEqual(originsNeeded([portal(), oktaTenant()]), []);
 });

@@ -71,7 +71,7 @@ manifest-check:
 [group('extension')]
 ext-lint:
     @web-ext lint --source-dir extension --warnings-as-errors \
-      --ignore-files "test/**" "types/**"
+      --ignore-files "test/**" "types/**" "regions.json"
 
 # Run the extension in a fresh temporary Firefox profile
 [group('extension')]
@@ -95,7 +95,8 @@ package version:
     work="$(mktemp -d)"
     trap 'rm -rf "$work"' EXIT
     cp -R extension/. "$work/"
-    rm -rf "$work/test" "$work/types"
+    # Tests, type declarations and the region source list do not ship.
+    rm -rf "$work/test" "$work/types" "$work/regions.json"
     jq --arg version "{{ version }}" '.version = $version' \
       extension/manifest.json > "$work/manifest.json"
     web-ext build --source-dir "$work" --artifacts-dir dist --overwrite-dest \
