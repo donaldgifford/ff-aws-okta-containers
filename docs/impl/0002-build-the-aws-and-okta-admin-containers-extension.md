@@ -281,7 +281,7 @@ containers.
       time per key; rename in place when the desired name changes;
       hand-rename detection using the recorded managed name; recreate when
       the mapped container no longer exists.
-- [ ] Handle `contextualIdentities.onRemoved` by forgetting the mapping.
+- [x] Handle `contextualIdentities.onRemoved` by forgetting the mapping.
 - [ ] Never adopt, rename or remove a container the extension did not
       create.
 - [x] A small in-memory fake of `contextualIdentities`, `storage.local` and
