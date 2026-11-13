@@ -233,7 +233,7 @@ browser APIs. This is the bulk of the test suite.
 - [x] `core/naming.js`: render name templates from tokens; apply colour
       rules with a stable-hash fallback; fixed icon per kind; validate a
       template and a rule.
-- [ ] `core/enrol.js`: turn a typed or captured address into an enrolment
+- [x] `core/enrol.js`: turn a typed or captured address into an enrolment
       request: organization kind, key, the exact addresses to request, and
       a suggested label.
 - [x] JSDoc type definitions for targets, decisions, organizations,
