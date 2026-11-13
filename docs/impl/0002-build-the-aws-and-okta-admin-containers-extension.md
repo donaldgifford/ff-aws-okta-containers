@@ -142,7 +142,7 @@ anything is built on them.
 <!--docz:tasks:start-->
 #### Tasks
 
-- [ ] Create `extension/` with `manifest.json` (Manifest V3, the extension
+- [x] Create `extension/` with `manifest.json` (Manifest V3, the extension
       ID, `strict_min_version` 140, `data_collection_permissions` of
       `none`, the permissions from DESIGN-0001, no `host_permissions`) and
       a module background script that only logs that it loaded.

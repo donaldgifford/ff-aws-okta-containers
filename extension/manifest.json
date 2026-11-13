@@ -1,0 +1,36 @@
+{
+  "manifest_version": 3,
+  "name": "AWS and Okta Containers",
+  "version": "0.1.0",
+  "description": "Opens AWS consoles, AWS access portals and Okta admin consoles in their own containers.",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "ff-aws-okta-containers@donaldgifford",
+      "strict_min_version": "140.0",
+      "data_collection_permissions": {
+        "required": ["none"]
+      }
+    },
+    "gecko_android": {
+      "strict_min_version": "142.0"
+    }
+  },
+  "permissions": [
+    "contextualIdentities",
+    "cookies",
+    "tabs",
+    "activeTab",
+    "storage",
+    "webRequest",
+    "webRequestBlocking",
+    "webRequestFilterResponse"
+  ],
+  "optional_host_permissions": [],
+  "background": {
+    "scripts": ["src/background/index.js"],
+    "type": "module"
+  },
+  "action": {
+    "default_title": "AWS and Okta containers"
+  }
+}
