@@ -323,16 +323,16 @@ can be given access to a portal or tenant, but does not yet act on it.
       `activeTab` and open the options page, on the add form with the
       address filled in when it is an unenrolled portal or Okta admin
       console.
-- [ ] Options page shell (`options.html`, `options.js`, plain CSS that
+- [x] Options page shell (`options.html`, `options.js`, plain CSS that
       follows Firefox's light and dark themes) with the Organizations
       section only.
-- [ ] Add form: address, required label, and for a portal a region chosen
+- [x] Add form: address, required label, and for a portal a region chosen
       from `regions.json`. The label is prefilled with a suggestion for
       Okta and left empty for a portal.
-- [ ] The Add button calls `permissions.request` as the first thing in its
+- [x] The Add button calls `permissions.request` as the first thing in its
       click handler, for exactly the addresses `core/enrol.js` returns,
       then saves the organization only if access was granted.
-- [ ] Organizations list: address, region, label, and whether access is
+- [x] Organizations list: address, region, label, and whether access is
       currently granted; edit label; change region; grant access again;
       remove.
 - [x] Removing an organization revokes its addresses, keeping a region's

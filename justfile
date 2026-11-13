@@ -67,10 +67,11 @@ source-check:
 manifest-check:
     @node scripts/gen-manifest.mjs --check
 
-# Lint the extension the way Mozilla does
+# Lint what ships in the extension, the way Mozilla does
 [group('extension')]
 ext-lint:
-    @web-ext lint --source-dir extension --warnings-as-errors
+    @web-ext lint --source-dir extension --warnings-as-errors \
+      --ignore-files "test/**" "types/**"
 
 # Run the extension in a fresh temporary Firefox profile
 [group('extension')]
