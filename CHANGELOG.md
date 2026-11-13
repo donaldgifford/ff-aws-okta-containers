@@ -26,6 +26,7 @@ this project adheres to [Semantic Versioning](https://semver.org/).
 - Record the confirmed account-name fix in IMPL-0001
 - Conclude INV-0001 and complete the IMPL-0001 spike
 - Add DESIGN-0001 for the containers extension
+- Add IMPL-0002 implementation plan for the extension
 
 ### Miscellaneous Tasks
 
