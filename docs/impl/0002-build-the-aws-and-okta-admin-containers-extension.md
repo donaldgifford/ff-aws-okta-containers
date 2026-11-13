@@ -507,23 +507,23 @@ The rest of the settings, on top of the Organizations section from phase 4.
 <!--docz:tasks:start-->
 #### Tasks
 
-- [ ] Naming section: the three templates, validated as typed, with a live
+- [x] Naming section: the three templates, validated as typed, with a live
       preview built from an example or a real managed container.
-- [ ] Colours section: the ordered rule list with add, remove and reorder.
-- [ ] Behaviour section: the three switches.
-- [ ] Saving labels, templates or colour rules recomputes every managed
+- [x] Colours section: the ordered rule list with add, remove and reorder.
+- [x] Behaviour section: the three switches.
+- [x] Saving labels, templates or colour rules recomputes every managed
       container and renames or recolours those that changed, skipping any
       renamed by hand.
-- [ ] Managed containers section: key, name, last used, and whether it was
+- [x] Managed containers section: key, name, last used, and whether it was
       renamed by hand, with a button to hand naming back to the extension.
-- [ ] Cleanup: list managed containers with no open tabs, and remove them
+- [x] Cleanup: list managed containers with no open tabs, and remove them
       only after the list is confirmed.
-- [ ] Backup: export settings and organization labels to a JSON file with
+- [x] Backup: export settings and organization labels to a JSON file with
       `schemaVersion`; import with validation. The container map, account
       names and site access are not exported.
-- [ ] After an import, organizations that lack site access are shown as
+- [x] After an import, organizations that lack site access are shown as
       needing it, with the grant button.
-- [ ] Unit tests: which containers a settings change renames; cleanup
+- [x] Unit tests: which containers a settings change renames; cleanup
       selection; export contents; import validation and rejection of a
       newer schema.
 - [ ] By hand: edit a label and watch containers rename without

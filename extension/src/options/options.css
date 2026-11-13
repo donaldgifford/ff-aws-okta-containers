@@ -201,6 +201,12 @@ button:disabled {
   color: var(--muted);
 }
 
+/* Still in the page when empty, so a message is announced when it arrives. */
+.status:empty {
+  min-height: 0;
+  margin: 0;
+}
+
 .status.error,
 .banner.error {
   color: var(--danger);
@@ -220,6 +226,72 @@ button:disabled {
 .banner time {
   display: block;
   margin: 0;
+}
+
+.preview.error {
+  color: var(--danger);
+}
+
+.rule {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: var(--gap);
+}
+
+.rule input[type="text"] {
+  flex: 1 1 12rem;
+  width: auto;
+}
+
+.rule select {
+  flex: 0 1 9rem;
+  width: auto;
+}
+
+.swatch {
+  inline-size: 1rem;
+  block-size: 1rem;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  flex: none;
+}
+
+.switch {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  margin-bottom: var(--gap);
+}
+
+.switch input {
+  flex: none;
+  margin: 0.15rem 0 0;
+}
+
+.import {
+  margin-top: var(--gap);
+  margin-bottom: 0;
+}
+
+.detail {
+  color: var(--muted);
+  margin: 0 0 var(--gap);
+}
+
+.card > .actions:last-child,
+.card > .detail:last-child {
+  margin-bottom: 0;
+}
+
+.visually-hidden {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 
 /* Last, so it wins over the display rules above. */

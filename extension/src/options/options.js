@@ -6,7 +6,12 @@ import { refreshAccess } from "../background/access.js";
 import { reopenInContainer } from "../background/navigation.js";
 import { createRegistry } from "../background/registry.js";
 import { createStore } from "../storage/store.js";
+import { createBackupSection } from "./backup.js";
+import { createBehaviourSection } from "./behaviour.js";
+import { createColoursSection } from "./colours.js";
+import { createContainersSection } from "./containers.js";
 import { byId, errorMessage } from "./dom.js";
+import { createNamingSection } from "./naming.js";
 import { createNoticeBanner } from "./notice.js";
 import { createOrganizationsSection } from "./organizations.js";
 
@@ -41,7 +46,15 @@ const organizations = createOrganizationsSection({
     );
   },
 });
-const sections = [createNoticeBanner({ store }), organizations];
+const sections = [
+  createNoticeBanner({ store }),
+  organizations,
+  createNamingSection({ store, registry }),
+  createColoursSection({ store, registry }),
+  createBehaviourSection({ store }),
+  createContainersSection({ store, registry }),
+  createBackupSection({ store, registry }),
+];
 
 async function render() {
   try {
@@ -65,8 +78,10 @@ browser.storage.onChanged.addListener((_changes, areaName) => {
 const offered = query.get("add");
 if (offered) organizations.offer(offered);
 
-// A grant may have been changed in the add-on manager since the last look.
+// A grant may have been changed in the add-on manager since the last look,
+// and a container renamed or removed in Firefox's settings.
 await refreshAccess({ store, permissions: browser.permissions }).catch(
   () => {},
 );
+await registry.syncNames().catch(() => {});
 await render();
