@@ -40,3 +40,34 @@ jobs:
 
       - name: Validate docs
         run: just docs-validate
+
+  extension:
+    name: Extension
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Set up mise
+        uses: jdx/mise-action@v4
+        with:
+          experimental: true
+
+      - name: Type-check
+        run: just typecheck
+
+      - name: Unit tests
+        run: just test
+
+      - name: Lint JavaScript
+        run: just js-lint
+
+      - name: Source checks
+        run: just source-check
+
+      - name: Manifest check
+        run: just manifest-check
+
+      - name: Lint extension
+        run: just ext-lint

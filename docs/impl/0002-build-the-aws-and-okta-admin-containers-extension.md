@@ -171,7 +171,7 @@ anything is built on them.
 - [x] Add `just` recipes `typecheck`, `test`, `js-lint`, `source-check`,
       `manifest-check`, `ext-lint`, `ext-run`, `smoke` and `package`, and
       make `just check` run all but `ext-run`, `smoke` and `package`.
-- [ ] Add CI jobs for everything `just check` runs, and an `extension` path
+- [x] Add CI jobs for everything `just check` runs, and an `extension` path
       to the labeler. The headless load test is not run in CI.
 - [ ] By hand: confirm that `permissions.request` grants a single address
       (for example one `awsapps.com` host) when the manifest declares only
