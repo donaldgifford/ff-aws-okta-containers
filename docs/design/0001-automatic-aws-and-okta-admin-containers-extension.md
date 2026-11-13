@@ -581,6 +581,10 @@ event, so it must hold no state in memory that it cannot rebuild.
   is already being held.
 - The only in-memory state is the per-key creation lock, which is safe to
   lose.
+- When access to an address is granted (`permissions.onAdded`), the request
+  listeners are removed and registered again. Firefox may already deliver
+  events for a newly granted address to a listener registered earlier;
+  registering again makes the extension correct either way.
 
 ### Manifest and permissions
 

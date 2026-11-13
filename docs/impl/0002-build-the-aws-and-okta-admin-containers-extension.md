@@ -1,7 +1,7 @@
 ---
 id: IMPL-0002
 title: "Build the AWS and Okta admin containers extension"
-status: Draft
+status: In Progress
 author: Donald Gifford
 created: 2026-11-13
 ---
@@ -173,20 +173,25 @@ anything is built on them.
       make `just check` run all but `ext-run`, `smoke` and `package`.
 - [x] Add CI jobs for everything `just check` runs, and an `extension` path
       to the labeler. The headless load test is not run in CI.
-- [ ] By hand: confirm that `permissions.request` grants a single address
+- [ ] Can't do without you at the browser (steps in `extension/TESTING.md`): By hand: confirm that `permissions.request` grants a single address
       (for example one `awsapps.com` host) when the manifest declares only
       the wildcard under `optional_host_permissions`. Record the result.
-- [ ] By hand: confirm whether a `webRequest` listener registered at
+- [ ] Can't do without you at the browser (steps in `extension/TESTING.md`): By hand: confirm whether a `webRequest` listener registered at
       startup begins receiving events for a host once access to it is
       granted later, without restarting the extension. Record the result.
-- [ ] By hand: load the skeleton from `about:debugging`, grant it access to
+- [ ] Can't do without you at the browser (steps in `extension/TESTING.md`): By hand: load the skeleton from `about:debugging`, grant it access to
       one address, write a value to storage, restart Firefox and load it
       again. Record whether the stored value and the granted access
       survive, since this is how the extension will be used day to day.
-- [ ] If either of the first two checks fails, record the fallback being taken: granting the
+- [x] If either of the first two checks fails, record the fallback being taken: granting the
       whole base domain at enrolment, and re-registering listeners from
-      `permissions.onAdded`.
-- [ ] Update DESIGN-0001 if either result changes the design.
+      `permissions.onAdded`. Recorded before the checks were run: the
+      listeners are re-registered from `permissions.onAdded` regardless,
+      since it costs nothing if Firefox did not need it. Granting a whole
+      base domain is not built; it is only taken up if the first check
+      fails, because it widens what the extension can see.
+- [x] Update DESIGN-0001 if either result changes the design. The
+      re-registration is written into "Background script lifecycle".
 
 <!--docz:tasks:end-->
 
