@@ -11,6 +11,10 @@ this project adheres to [Semantic Versioning](https://semver.org/).
 - *(spike)* Add throwaway extension harness for IMPL-0001 phase 1
 - *(spike)* Add AWS and Okta interception for IMPL-0001 phases 2 and 3
 
+### Bug Fixes
+
+- *(spike)* Learn account names from the portal's POST account list
+
 ### Documentation
 
 - Add INV-0001 for the AWS SSO and Okta containers extension
