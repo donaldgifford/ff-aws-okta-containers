@@ -335,12 +335,12 @@ can be given access to a portal or tenant, but does not yet act on it.
 - [ ] Organizations list: address, region, label, and whether access is
       currently granted; edit label; change region; grant access again;
       remove.
-- [ ] Removing an organization revokes its addresses, keeping a region's
+- [x] Removing an organization revokes its addresses, keeping a region's
       API address while another enrolled portal uses it.
 - [ ] Listen for `permissions.onRemoved` and `onAdded`, and re-check with
       `permissions.contains` at startup, so a grant changed in the add-on
       manager is reflected.
-- [ ] Unit tests for the enrolment decisions: which addresses to request,
+- [x] Unit tests for the enrolment decisions: which addresses to request,
       which to revoke on removal with a shared region, and status after a
       revoked grant.
 - [ ] By hand: enrol a portal and an Okta tenant, check the prompt names

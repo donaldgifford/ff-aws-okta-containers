@@ -13,8 +13,6 @@ import { parseOktaHost, parsePortalHost } from "./classify.js";
 import { oktaKey, portalKey } from "./keys.js";
 
 const MAX_LABEL_LENGTH = 40;
-// Identifiers AWS generates, which make poor labels.
-const GENERATED_PORTAL_NAME = /^(?:d-[0-9a-f]{10}|ssoins-[0-9a-f]+)$/;
 const OKTA_LABEL_SUFFIX = Object.freeze(
   /** @type {Record<string, string>} */ ({
     "oktapreview.com": " (preview)",
@@ -43,8 +41,8 @@ export const ENROL_FAILURES = Object.freeze({
  * @property {string} host The portal host, or the Okta tenant host without
  *   `-admin`.
  * @property {string | null} region The region, if the address carries it.
- * @property {string} suggestedLabel May be empty when nothing readable can
- *   be taken from the address.
+ * @property {string} suggestedLabel The org name for Okta; empty for a
+ *   portal, whose label is always the user's choice.
  */
 
 /**
@@ -103,9 +101,8 @@ export function recogniseAddress(address) {
       key: portalKey(portal.host),
       host: portal.host,
       region: portal.region,
-      suggestedLabel: GENERATED_PORTAL_NAME.test(portal.name)
-        ? ""
-        : portal.name,
+      // A portal's label is always the user's choice.
+      suggestedLabel: "",
     };
   }
 
@@ -184,6 +181,23 @@ export function originsToRevoke(organization, organizations) {
       .flatMap((other) => originsFor(other)),
   );
   return originsFor(organization).filter((origin) => !stillNeeded.has(origin));
+}
+
+/**
+ * Decides what the toolbar button should offer for the tab it was clicked
+ * on: the address to put in the add form, if the tab is on a portal or Okta
+ * tenant that is not enrolled yet.
+ *
+ * @param {string | undefined} tabUrl
+ * @param {readonly Organization[]} organizations
+ * @returns {string | null} The host to offer, or null to offer nothing.
+ */
+export function enrolmentOffer(tabUrl, organizations) {
+  if (!tabUrl) return null;
+  const recognised = recogniseAddress(tabUrl);
+  if (!recognised) return null;
+  if (organizations.some((item) => item.key === recognised.key)) return null;
+  return new URL(tabUrl).hostname;
 }
 
 /**

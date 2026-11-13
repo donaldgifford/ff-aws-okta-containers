@@ -5,6 +5,7 @@ import {
   apiHost,
   buildOrganization,
   ENROL_FAILURES,
+  enrolmentOffer,
   originsFor,
   originsToRevoke,
   planEnrolment,
@@ -71,9 +72,10 @@ test("a bare host is accepted as an address", () => {
   assert.equal(recogniseAddress("acme-admin.okta.com")?.kind, "okta-admin");
 });
 
-test("labels are suggested where the address has something readable", () => {
-  assert.equal(recogniseAddress("acme.awsapps.com")?.suggestedLabel, "acme");
+test("a label is suggested for Okta and left empty for a portal", () => {
+  assert.equal(recogniseAddress("acme.awsapps.com")?.suggestedLabel, "");
   assert.equal(recogniseAddress(PORTAL_HOST)?.suggestedLabel, "");
+  assert.equal(recogniseAddress("acme.okta.com")?.suggestedLabel, "acme");
   assert.equal(
     recogniseAddress("acme-admin.oktapreview.com")?.suggestedLabel,
     "acme (preview)",
@@ -206,4 +208,27 @@ test("an enrolment becomes an organization record with its label", () => {
     buildOrganization(plan, "  acme  ", new Date("2026-01-01T00:00:00.000Z")),
     portal(),
   );
+});
+
+test("the toolbar button offers to add an unenrolled portal or tenant", () => {
+  const enrolled = [portal()];
+
+  assert.equal(
+    enrolmentOffer("https://d-0987654321.awsapps.com/start/#/", enrolled),
+    "d-0987654321.awsapps.com",
+  );
+  assert.equal(
+    enrolmentOffer("https://acme-admin.okta.com/admin/dashboard", enrolled),
+    "acme-admin.okta.com",
+  );
+});
+
+test("the toolbar button offers nothing for an enrolled or unrelated tab", () => {
+  const enrolled = [portal(), oktaTenant()];
+
+  assert.equal(enrolmentOffer(PORTAL_URL, enrolled), null);
+  assert.equal(enrolmentOffer("https://acme-admin.okta.com/", enrolled), null);
+  assert.equal(enrolmentOffer("https://example.com/", enrolled), null);
+  assert.equal(enrolmentOffer("about:newtab", enrolled), null);
+  assert.equal(enrolmentOffer(undefined, enrolled), null);
 });
