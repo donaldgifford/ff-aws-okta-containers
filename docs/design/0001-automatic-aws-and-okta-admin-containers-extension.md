@@ -699,26 +699,40 @@ Residual risks:
 ```text
 extension/
   manifest.json           checked in; host permissions written by a script
+  regions.json            AWS regions; the source for the two generated lists
+  icons/
   src/
     core/                 pure logic, no browser APIs
-      classify.js
-      routing.js
-      federation.js
-      naming.js
+      types.js            shared JSDoc types
+      keys.js             target keys
+      classify.js         is this address an enrolled portal or admin console
+      routing.js          should this navigation move
+      federation.js       validate the sign-in exchange, build the sign-in URL
+      accounts.js         account names from the portal's account list
+      naming.js           templates, colour rules, icons
+      enrol.js            which addresses to request and to give up
+      regions.js          generated from regions.json
+    storage/
+      schema.js           the stored records, defaults and migrations
+      store.js            reads and writes behind one cached promise
+      backup.js           export and import
     background/
       index.js            listener registration
-      registry.js
-      accounts.js
-    storage/
-      schema.js           types and migrations
-      store.js
+      registry.js         the only code that creates or renames containers
+      aws.js              console hand-off and account names
+      navigation.js       portal and Okta admin routing
+      response.js         reading a response through a stream filter
+      notices.js          the toolbar warning badge
+      access.js           keeps "access granted" in step with Firefox
+      tabs.js
     options/
-      options.html
-      options.js
-  regions.json            AWS regions for portal API host permissions
-  test/
-    core/                 unit tests with sanitized fixtures
-    smoke/                headless Firefox load test
+      options.html, options.css, options.js
+      organizations.js, naming.js, colours.js, behaviour.js,
+      containers.js, backup.js, notice.js   one module per section
+      enrolment.js        what the page does to organizations, without a page
+      dom.js
+  types/browser.d.ts      declarations for the browser APIs that are called
+  test/                   unit tests, fixtures, the browser fake, smoke test
 ```
 
 Plain JavaScript modules with JSDoc types, checked by `tsc` and packaged

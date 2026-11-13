@@ -424,7 +424,7 @@ portals.
 - [x] Unit tests for the listener glue with the fake browser: success,
       each failure path releasing the body, the shortcut-tab rule, and
       rename on name arrival.
-- [ ] Can't do without you at the browser (steps in `extension/TESTING.md`): By hand, against a real portal: a role click, a second account, the
+- [ ] Waiting on you (the "(real)" items in `extension/TESTING.md`, section 2): By hand, against a real portal: a role click, a second account, the
       same role twice, a bookmarked shortcut link, a role click after the
       background script has gone idle with DevTools closed, and a portal
       enrolled with the wrong region.
@@ -467,7 +467,7 @@ container. After this phase the extension does everything the spike did.
       new container.
 - [x] Unit tests for the listener glue: move, each leave-alone reason, and
       the failure path.
-- [ ] Can't do without you at the browser (steps in `extension/TESTING.md`): By hand: a portal and two Okta tenants from ordinary tabs; sign-in
+- [ ] Waiting on you (the "(real)" items in `extension/TESTING.md`, section 3; the rest of this list was run against a headless Firefox 160 and passed): By hand: a portal and two Okta tenants from ordinary tabs; sign-in
       completing inside each container; two tenants and two portals signed
       in at once; `<org>.okta.com` not moving; a portal launched from an
       Okta dashboard tile in an ordinary tab; a portal opened from inside
@@ -571,9 +571,9 @@ use and test it. Nothing in this phase involves Mozilla.
 <!--docz:tasks:start-->
 #### Tasks
 
-- [ ] Write `extension/TESTING.md`: the manual checklist, gathered from the
+- [x] Write `extension/TESTING.md`: the manual checklist, gathered from the
       "by hand" tasks above.
-- [ ] Rewrite `README.md` for users: what it does, how to load it from
+- [x] Rewrite `README.md` for users: what it does, how to load it from
       `about:debugging`, what has to be redone after a Firefox restart, how
       to enrol a portal and a tenant, what access it holds and why, and
       how to remove it.
@@ -590,13 +590,13 @@ use and test it. Nothing in this phase involves Mozilla.
       access and containers all survive, so the routine is the one reload.
       The button is there for the cases where access is missing anyway:
       after an import, or after grants were removed in the add-on manager.
-- [ ] Run the full manual checklist against the extension loaded from a
+- [ ] Waiting on you (needs the real portal and tenants, after the merge): Run the full manual checklist against the extension loaded from a
       clean checkout of `main`.
-- [ ] Merge the final pull request with the `minor` label, so the release
+- [ ] Waiting on you (nothing has been pushed; pushing and merging are yours to ask for): Merge the final pull request with the `minor` label, so the release
       workflow tags `v0.1.0` and creates the GitHub release.
-- [ ] Use it daily. Record problems as issues, and note here anything that
+- [ ] Waiting on you: Use it daily. Record problems as issues, and note here anything that
       should change before signing is taken up.
-- [ ] Set DESIGN-0001 to Implemented and this document to Completed.
+- [ ] Waiting on the four tasks above: Set DESIGN-0001 to Implemented and this document to Completed.
 
 <!--docz:tasks:end-->
 
@@ -665,21 +665,21 @@ third platform check in phase 1.
 <!--docz:testing:start-->
 ## Testing Plan
 
-- [ ] Unit tests for every function in `core/`, with the cases named in
+- [x] Unit tests for every function in `core/`, with the cases named in
       DESIGN-0001's testing strategy.
-- [ ] Unit tests for storage migrations and the registry against the
+- [x] Unit tests for storage migrations and the registry against the
       browser fake.
-- [ ] Unit tests for the listener glue in phases 5 and 6 against the
+- [x] Unit tests for the listener glue in phases 5 and 6 against the
       browser fake.
-- [ ] Source checks enforcing no network calls, no cookies API, no dynamic
+- [x] Source checks enforcing no network calls, no cookies API, no dynamic
       code, and that only the registry manages containers.
-- [ ] Manifest check that the optional host permissions match
+- [x] Manifest check that the optional host permissions match
       `regions.json`.
-- [ ] The headless load test, run locally with `just smoke` before each
+- [x] The headless load test, run locally with `just smoke` before each
       phase is called complete.
-- [ ] The manual checklist, run at the end of phases 5, 6 and 7 for the
+- [ ] Partly done (everything not marked "(real)" in `extension/TESTING.md` was run against a headless Firefox 160; the "(real)" items are waiting on you): The manual checklist, run at the end of phases 5, 6 and 7 for the
       parts that exist, and in full in phase 8.
-- [ ] A diff review for real identifiers before every commit.
+- [x] A diff review for real identifiers before every commit.
 
 <!--docz:testing:end-->
 
