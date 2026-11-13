@@ -236,7 +236,7 @@ browser APIs. This is the bulk of the test suite.
 - [ ] `core/enrol.js`: turn a typed or captured address into an enrolment
       request: organization kind, key, the exact addresses to request, and
       a suggested label.
-- [ ] JSDoc type definitions for targets, decisions, organizations,
+- [x] JSDoc type definitions for targets, decisions, organizations,
       settings and container records, shared by the later phases.
 - [ ] Keep `extension/types/browser.d.ts` in step with the calls each phase
       adds; a call with no declaration fails type checking.
