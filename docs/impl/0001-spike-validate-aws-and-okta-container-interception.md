@@ -256,7 +256,9 @@ with placeholders.
 - **Bug found:** account names were never learned, so containers were named
   with the account ID. The account list is a POST and the spike only read
   GET responses. Fixed and confirmed: after the fix a console container
-  was named `<directory-id> <account-name> / <PermissionSet>`. The account
+  was named with the account name. The name format was then changed to
+  `<account-name>(<org>) / <PermissionSet>`, account first, because that
+  reads better in the tab bar and container menu. The account
   name comes from `result[].searchMetadata.AccountName` in the account-list
   response, keyed by `AccountId`.
 - **Default organization label** is the directory ID, which is not

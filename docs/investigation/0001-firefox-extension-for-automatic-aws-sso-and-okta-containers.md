@@ -435,7 +435,7 @@ Resulting containers:
 | Kind | Key | Default name |
 | ---- | --- | ------------ |
 | AWS access portal | `aws-portal:<portal-host>` | `<org> portal` |
-| AWS console | `aws:<account-id>:<permission-set>` | `<org> <account-name> / <PermissionSet>` |
+| AWS console | `aws:<account-id>:<permission-set>` | `<account-name>(<org>) / <PermissionSet>` |
 | Okta admin console | `okta-admin:<tenant-host>` | `<tenant> okta admin` |
 
 Resulting routing rule, the same for portal hosts and Okta admin hosts:

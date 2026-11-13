@@ -279,7 +279,7 @@ function onFederation(details) {
     const destination =
       originQuery.get("destination") || body.destination || "https://console.aws.amazon.com/";
 
-    const name = `${org} ${(await accountName(accountId)) || accountId} / ${roleName}`;
+    const name = `${(await accountName(accountId)) || accountId}(${org}) / ${roleName}`;
     const signInUrl =
       body.signInFederationLocation +
       "?Action=login" +
