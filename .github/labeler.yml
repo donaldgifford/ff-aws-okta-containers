@@ -4,7 +4,6 @@
 extension:
   - changed-files:
       - any-glob-to-any-file: extension/**
-      - any-glob-to-any-file: spike/**
 
 dependencies:
   - changed-files:

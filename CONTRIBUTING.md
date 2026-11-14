@@ -7,7 +7,8 @@ issues, propose changes, and submit pull requests.
 
 ```bash
 mise install                      # toolchain pinned in mise.toml
-just lint                         # lint
+just check                        # lint, type-check, unit tests, source checks
+just smoke                        # load the extension in headless Firefox
 ```
 
 `just --list` enumerates every recipe.
@@ -35,8 +36,11 @@ Use [GitHub Issues](https://github.com/donaldgifford/ff-aws-okta-containers/issu
 git clone https://github.com/donaldgifford/ff-aws-okta-containers.git
 cd ff-aws-okta-containers
 mise install
-just lint    # runs linters
+just check   # lint, type-check, unit tests, source checks
 ```
+
+There is no `package.json`. The extension is plain JavaScript with JSDoc
+types, and the tools that check it are pinned in `mise.toml`.
 
 ## Making Changes
 
@@ -56,7 +60,10 @@ Types: `feat`, `fix`, `docs`, `chore`, `refactor`
 
 - Keep changes focused. One logical change per PR.
 - Add or update tests for any code you change.
-- Run `just lint` before pushing.
+- Run `just check` before pushing, and `just smoke` if you touched the
+  background script.
+- If you changed how requests are handled, run the relevant part of
+  [extension/TESTING.md](extension/TESTING.md).
 - This repository is public. Do not commit real account IDs, account names,
   portal hostnames, Okta tenant names, tokens or cookies. Use placeholders
   such as `acme` and `111122223333`.

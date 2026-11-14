@@ -1,0 +1,43 @@
+{
+  "paginationToken": null,
+  "result": [
+    {
+      "id": "ins-0000000000000001",
+      "name": "payments-prod",
+      "description": "AWS Account",
+      "applicationId": "app-0000000000000001",
+      "applicationName": "AWS Account",
+      "icon": "https://static.global.sso.amazonaws.com/app-0000000000000001/icons/default.png",
+      "searchMetadata": {
+        "AccountId": "111122223333",
+        "AccountName": "payments-prod",
+        "AccountEmail": "payments-prod@example.com"
+      }
+    },
+    {
+      "id": "ins-0000000000000002",
+      "name": "payments-dev",
+      "description": "AWS Account",
+      "applicationId": "app-0000000000000001",
+      "applicationName": "AWS Account",
+      "searchMetadata": {
+        "AccountId": "444455556666",
+        "AccountName": "  payments-dev  ",
+        "AccountEmail": "payments-dev@example.com"
+      }
+    },
+    {
+      "id": "ins-0000000000000003",
+      "name": "An application that is not an account",
+      "applicationName": "Example App"
+    },
+    {
+      "id": "ins-0000000000000004",
+      "searchMetadata": { "AccountId": "not-an-id", "AccountName": "bad-id" }
+    },
+    {
+      "id": "ins-0000000000000005",
+      "searchMetadata": { "AccountId": "777788889999", "AccountName": "" }
+    }
+  ]
+}

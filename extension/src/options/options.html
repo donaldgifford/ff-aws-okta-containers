@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <title>AWS and Okta Containers</title>
+    <link rel="stylesheet" href="options.css" />
+    <script type="module" src="options.js"></script>
+  </head>
+  <body>
+    <main>
+      <h1>AWS and Okta Containers</h1>
+      <p id="page-error" class="banner error" role="alert" hidden></p>
+      <p id="notice" class="banner warn" role="status" hidden>
+        <span id="notice-text"></span>
+        <time id="notice-time" class="hint"></time>
+      </p>
+
+      <section aria-labelledby="organizations-heading">
+        <h2 id="organizations-heading">Organizations</h2>
+        <p class="hint">
+          The extension can only see the AWS access portals and Okta tenants
+          listed here. Adding one asks Firefox for access to exactly the
+          addresses shown, and nothing else.
+        </p>
+
+        <p id="organizations-empty" class="empty">
+          Nothing is enrolled yet, so the extension has no access to any
+          site.
+        </p>
+        <div id="grant-all" class="banner warn" hidden>
+          <p id="grant-all-text"></p>
+          <button id="grant-all-button" type="button" class="primary">
+            Grant access to all of them
+          </button>
+        </div>
+        <ul id="organizations" class="cards"></ul>
+        <p id="organizations-status" class="status" role="status"></p>
+
+        <form id="add-form" class="card" novalidate>
+          <h3>Add a portal or an Okta tenant</h3>
+
+          <div class="field">
+            <label for="add-address">Address</label>
+            <input
+              id="add-address"
+              type="text"
+              inputmode="url"
+              autocomplete="off"
+              autocapitalize="off"
+              spellcheck="false"
+              placeholder="d-1234567890.awsapps.com or acme-admin.okta.com"
+              aria-describedby="add-address-hint"
+            />
+            <p id="add-address-hint" class="hint">
+              An AWS access portal, or an Okta tenant. For Okta, only the
+              admin console is ever handled.
+            </p>
+          </div>
+
+          <div class="field">
+            <label for="add-label">Label</label>
+            <input
+              id="add-label"
+              type="text"
+              maxlength="40"
+              autocomplete="off"
+              aria-describedby="add-label-hint"
+            />
+            <p id="add-label-hint" class="hint">
+              Required. Used in container names, for example
+              <code>payments-prod(label) / AdminAccess</code>.
+            </p>
+          </div>
+
+          <div class="field" id="add-region-field" hidden>
+            <label for="add-region">AWS region</label>
+            <select id="add-region" aria-describedby="add-region-hint"></select>
+            <p id="add-region-hint" class="hint">
+              The region your IAM Identity Center is in. It is shown in the
+              AWS console under IAM Identity Center, Settings.
+            </p>
+          </div>
+
+          <div id="add-grants" hidden>
+            <p class="hint">Firefox will ask for access to:</p>
+            <ul id="add-origins" class="origins"></ul>
+          </div>
+
+          <div class="actions">
+            <button id="add-button" type="submit" class="primary">Add</button>
+          </div>
+          <p id="add-status" class="status" role="status"></p>
+        </form>
+      </section>
+
+      <section aria-labelledby="naming-heading">
+        <h2 id="naming-heading">Naming</h2>
+        <p class="hint">
+          Container names are built from these templates. A console can use
+          <code>{account}</code>, <code>{accountId}</code>,
+          <code>{role}</code> and <code>{org}</code>; a portal and an Okta
+          admin console can use <code>{org}</code>, the organization's label.
+        </p>
+        <form id="naming-form" class="card" novalidate>
+          <div class="field">
+            <label for="template-console">AWS console</label>
+            <input
+              id="template-console"
+              type="text"
+              maxlength="80"
+              autocomplete="off"
+              spellcheck="false"
+              aria-describedby="template-console-preview"
+            />
+            <p id="template-console-preview" class="hint preview"></p>
+          </div>
+          <div class="field">
+            <label for="template-portal">AWS access portal</label>
+            <input
+              id="template-portal"
+              type="text"
+              maxlength="80"
+              autocomplete="off"
+              spellcheck="false"
+              aria-describedby="template-portal-preview"
+            />
+            <p id="template-portal-preview" class="hint preview"></p>
+          </div>
+          <div class="field">
+            <label for="template-okta">Okta admin console</label>
+            <input
+              id="template-okta"
+              type="text"
+              maxlength="80"
+              autocomplete="off"
+              spellcheck="false"
+              aria-describedby="template-okta-preview"
+            />
+            <p id="template-okta-preview" class="hint preview"></p>
+          </div>
+          <div class="actions">
+            <button id="naming-save" type="submit" class="primary">
+              Save names
+            </button>
+            <button id="naming-reset" type="button">Restore defaults</button>
+          </div>
+          <p id="naming-status" class="status" role="status"></p>
+        </form>
+      </section>
+
+      <section aria-labelledby="colours-heading">
+        <h2 id="colours-heading">Colours</h2>
+        <p class="hint">
+          The first rule whose text appears in a container's name sets its
+          colour. Separate alternatives with commas; letter case is ignored.
+          A name that matches no rule gets a colour of its own, which never
+          changes.
+        </p>
+        <form id="colours-form" class="card" novalidate>
+          <ol id="colour-rules" class="rows"></ol>
+          <p id="colour-rules-empty" class="empty" hidden>
+            No rules. Every container gets a colour of its own.
+          </p>
+          <div class="actions">
+            <button id="colours-add" type="button">Add a rule</button>
+            <button id="colours-save" type="submit" class="primary">
+              Save colours
+            </button>
+            <button id="colours-reset" type="button">Restore defaults</button>
+          </div>
+          <p id="colours-status" class="status" role="status"></p>
+        </form>
+      </section>
+
+      <section aria-labelledby="behaviour-heading">
+        <h2 id="behaviour-heading">Behaviour</h2>
+        <p class="hint">
+          What the extension does for the organizations above. A change
+          takes effect at once.
+        </p>
+        <div class="card">
+          <label class="switch">
+            <input id="switch-consoles" type="checkbox" />
+            <span>
+              AWS consoles: open each console in a container for its account
+              and role
+            </span>
+          </label>
+          <label class="switch">
+            <input id="switch-portals" type="checkbox" />
+            <span>
+              AWS access portals: open each portal in a container of its own
+            </span>
+          </label>
+          <label class="switch">
+            <input id="switch-okta" type="checkbox" />
+            <span>
+              Okta admin consoles: open each tenant's admin console in a
+              container of its own
+            </span>
+          </label>
+          <p id="behaviour-status" class="status" role="status"></p>
+        </div>
+      </section>
+
+      <section aria-labelledby="containers-heading">
+        <h2 id="containers-heading">Managed containers</h2>
+        <p class="hint">
+          The containers this extension created. It never renames or removes
+          any other container.
+        </p>
+        <p id="containers-empty" class="empty">
+          None yet. One is created the first time a portal, a console or an
+          Okta admin console is opened.
+        </p>
+        <ul id="containers" class="cards"></ul>
+        <div class="actions">
+          <button id="cleanup-find" type="button">
+            Find containers with no open tabs
+          </button>
+        </div>
+        <div id="cleanup-confirm" class="card" hidden>
+          <h3 id="cleanup-heading" tabindex="-1">Remove these containers?</h3>
+          <p class="hint">
+            None of them has a tab open. Removing a container signs you out
+            of everything in it. It is created again the next time it is
+            needed.
+          </p>
+          <ul id="cleanup-list" class="origins"></ul>
+          <div class="actions">
+            <button id="cleanup-remove" type="button" class="danger">
+              Remove them
+            </button>
+            <button id="cleanup-cancel" type="button">Cancel</button>
+          </div>
+        </div>
+        <p id="containers-status" class="status" role="status"></p>
+      </section>
+
+      <section aria-labelledby="backup-heading">
+        <h2 id="backup-heading">Backup</h2>
+        <p class="hint">
+          An export holds the names, colours, switches and the list of
+          organizations with their labels. It does not hold containers,
+          account names or site access, so after an import each organization
+          has to be granted access again.
+        </p>
+        <div class="card">
+          <div class="actions">
+            <button id="backup-export" type="button">Export settings</button>
+          </div>
+          <div class="field import">
+            <label for="backup-import">Import settings from a file</label>
+            <input id="backup-import" type="file" accept=".json,application/json" />
+          </div>
+          <p id="backup-status" class="status" role="status"></p>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

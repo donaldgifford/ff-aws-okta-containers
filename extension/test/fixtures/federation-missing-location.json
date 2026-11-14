@@ -1,0 +1,4 @@
+{
+  "signInToken": "EXAMPLE-TOKEN",
+  "destination": "https://console.aws.amazon.com/"
+}

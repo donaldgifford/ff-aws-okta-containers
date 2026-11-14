@@ -1,7 +1,7 @@
 ---
 id: IMPL-0002
 title: "Build the AWS and Okta admin containers extension"
-status: Draft
+status: In Progress
 author: Donald Gifford
 created: 2026-11-13
 ---
@@ -142,51 +142,73 @@ anything is built on them.
 <!--docz:tasks:start-->
 #### Tasks
 
-- [ ] Create `extension/` with `manifest.json` (Manifest V3, the extension
+- [x] Create `extension/` with `manifest.json` (Manifest V3, the extension
       ID, `strict_min_version` 140, `data_collection_permissions` of
       `none`, the permissions from DESIGN-0001, no `host_permissions`) and
       a module background script that only logs that it loaded.
-- [ ] Add `extension/regions.json` listing the commercial AWS regions where
+- [x] Add `extension/regions.json` listing the commercial AWS regions where
       IAM Identity Center is available, with the AWS documentation page it
       was taken from.
-- [ ] Add `scripts/gen-manifest.mjs`, which writes the
+- [x] Add `scripts/gen-manifest.mjs`, which writes the
       `optional_host_permissions` list into `manifest.json` from
       `regions.json`, and a `--check` mode that fails if the two disagree.
-- [ ] Add `typescript`, `biome` and `jq` to `mise.toml`. There is no
+- [x] Add `typescript`, `biome` and `jq` to `mise.toml`. There is no
       `package.json`, lockfile or `node_modules` in the repository.
-- [ ] Add a `jsconfig.json` that turns on strict checking of JavaScript,
+- [x] Add a `jsconfig.json` that turns on strict checking of JavaScript,
       and `extension/types/browser.d.ts`: hand-written declarations for
       only the `browser.*` calls the extension makes, each with a link to
       its MDN page.
-- [ ] Add a `biome.json` that lints and formats `extension/` and
+- [x] Add a `biome.json` that lints and formats `extension/` and
       `scripts/`.
-- [ ] Tests run with `node --test` and Node's built-in assertions.
-- [ ] Add `scripts/check-source.mjs`, which fails if anything under
+- [x] Tests run with `node --test` and Node's built-in assertions.
+- [x] Add `scripts/check-source.mjs`, which fails if anything under
       `extension/src` uses `fetch`, `XMLHttpRequest`, `WebSocket`,
       `sendBeacon`, `eval`, `new Function`, or `browser.cookies`.
-- [ ] Add a headless load test under `extension/test/smoke/`: copy the
+- [x] Add a headless load test under `extension/test/smoke/`: copy the
       extension to a temporary directory, append a test driver, run it
       with `web-ext` in headless Firefox, and assert that it loaded with no
       errors. The driver lives only in the test directory.
-- [ ] Add `just` recipes `typecheck`, `test`, `js-lint`, `source-check`,
+- [x] Add `just` recipes `typecheck`, `test`, `js-lint`, `source-check`,
       `manifest-check`, `ext-lint`, `ext-run`, `smoke` and `package`, and
       make `just check` run all but `ext-run`, `smoke` and `package`.
-- [ ] Add CI jobs for everything `just check` runs, and an `extension` path
+- [x] Add CI jobs for everything `just check` runs, and an `extension` path
       to the labeler. The headless load test is not run in CI.
-- [ ] By hand: confirm that `permissions.request` grants a single address
+- [x] By hand: confirm that `permissions.request` grants a single address
       (for example one `awsapps.com` host) when the manifest declares only
-      the wildcard under `optional_host_permissions`. Record the result.
-- [ ] By hand: confirm whether a `webRequest` listener registered at
+      the wildcard under `optional_host_permissions`. **Result (Firefox
+      160):** it does. Enrolling a portal granted exactly
+      `https://d-1234567890.awsapps.com/*` and
+      `https://portal.sso.us-west-2.amazonaws.com/*`; enrolling an Okta
+      tenant granted exactly its `-admin` address. Firefox's prompt named
+      those hosts and nothing else, and declining it saved nothing.
+- [x] By hand: confirm whether a `webRequest` listener registered at
       startup begins receiving events for a host once access to it is
-      granted later, without restarting the extension. Record the result.
-- [ ] By hand: load the skeleton from `about:debugging`, grant it access to
+      granted later, without restarting the extension. **Result (Firefox
+      160):** it does. With the listeners registered before anything was
+      enrolled, a portal and an Okta admin console were both moved into
+      their containers straight after enrolment, and `<org>.okta.com` was
+      left alone.
+- [x] By hand: load the skeleton from `about:debugging`, grant it access to
       one address, write a value to storage, restart Firefox and load it
       again. Record whether the stored value and the granted access
       survive, since this is how the extension will be used day to day.
-- [ ] If either of the first two checks fails, record the fallback being taken: granting the
+      **Result (Firefox 160):** both survive. After a normal quit and
+      loading the temporary add-on again, the organizations, the container
+      map and the granted addresses were all still there, and routing
+      worked at once. The extension keeps the same internal ID because the
+      manifest sets an explicit add-on ID.
+- [x] If either of the first two checks fails, record the fallback being taken: granting the
       whole base domain at enrolment, and re-registering listeners from
-      `permissions.onAdded`.
-- [ ] Update DESIGN-0001 if either result changes the design.
+      `permissions.onAdded`. Neither failed, so neither fallback is built:
+      enrolment requests single addresses only, and listeners are
+      registered once, at the top level.
+- [x] Update DESIGN-0001 if either result changes the design. The results
+      are recorded under "Enrolment" and "Background script lifecycle".
+
+These three checks were run by a throwaway script that drove a real,
+headless Firefox 160 through the extension's own options page with a
+temporary profile, rather than by hand. It is not part of the repository.
+It also found a bug that unit tests had missed; see phase 4.
 
 <!--docz:tasks:end-->
 
@@ -213,31 +235,31 @@ browser APIs. This is the bulk of the test suite.
 <!--docz:tasks:start-->
 #### Tasks
 
-- [ ] `core/classify.js`: URL plus the enrolled organizations to a target
+- [x] `core/classify.js`: URL plus the enrolled organizations to a target
       (`aws-portal` or `okta-admin`, with its key) or nothing. Includes the
       `awsapps.com` and `app.aws` portal forms and the three Okta base
       domains.
-- [ ] `core/routing.js`: request facts (method, tab container, private
+- [x] `core/routing.js`: request facts (method, tab container, private
       window, target, settings) to a decision with a reason.
-- [ ] `core/federation.js`: validate the request parameters
+- [x] `core/federation.js`: validate the request parameters
       (`account_id`, `role_name`); parse and validate the response body;
       validate the sign-in host; choose the destination; build the sign-in
       URL.
-- [ ] `core/accounts.js`: extract account IDs and names from an
+- [x] `core/accounts.js`: extract account IDs and names from an
       account-list response body.
-- [ ] `core/naming.js`: render name templates from tokens; apply colour
+- [x] `core/naming.js`: render name templates from tokens; apply colour
       rules with a stable-hash fallback; fixed icon per kind; validate a
       template and a rule.
-- [ ] `core/enrol.js`: turn a typed or captured address into an enrolment
+- [x] `core/enrol.js`: turn a typed or captured address into an enrolment
       request: organization kind, key, the exact addresses to request, and
       a suggested label.
-- [ ] JSDoc type definitions for targets, decisions, organizations,
+- [x] JSDoc type definitions for targets, decisions, organizations,
       settings and container records, shared by the later phases.
-- [ ] Keep `extension/types/browser.d.ts` in step with the calls each phase
+- [x] Keep `extension/types/browser.d.ts` in step with the calls each phase
       adds; a call with no declaration fails type checking.
-- [ ] Unit tests for all of the above, including every case listed under
+- [x] Unit tests for all of the above, including every case listed under
       Testing Strategy in DESIGN-0001.
-- [ ] Sanitized fixtures for the federation and account-list responses,
+- [x] Sanitized fixtures for the federation and account-list responses,
       taken from the shapes recorded in IMPL-0001.
 
 <!--docz:tasks:end-->
@@ -267,25 +289,25 @@ containers.
 <!--docz:tasks:start-->
 #### Tasks
 
-- [ ] `storage/schema.js`: the settings, organization, account and managed
+- [x] `storage/schema.js`: the settings, organization, account and managed
       container records from DESIGN-0001, defaults (including the three
       default colour rules), and numbered migrations starting at version 1.
-- [ ] `storage/store.js`: read and write over `storage.local` behind one
+- [x] `storage/store.js`: read and write over `storage.local` behind one
       cached promise; refuse to run on data from a newer schema version.
-- [ ] `background/registry.js`: get-or-create by key; one creation at a
+- [x] `background/registry.js`: get-or-create by key; one creation at a
       time per key; rename in place when the desired name changes;
       hand-rename detection using the recorded managed name; recreate when
       the mapped container no longer exists.
-- [ ] Handle `contextualIdentities.onRemoved` by forgetting the mapping.
-- [ ] Never adopt, rename or remove a container the extension did not
+- [x] Handle `contextualIdentities.onRemoved` by forgetting the mapping.
+- [x] Never adopt, rename or remove a container the extension did not
       create.
-- [ ] A small in-memory fake of `contextualIdentities`, `storage.local` and
+- [x] A small in-memory fake of `contextualIdentities`, `storage.local` and
       `tabs` for tests, kept under `extension/test/`.
-- [ ] Unit tests: create then reuse; two simultaneous requests for one key
+- [x] Unit tests: create then reuse; two simultaneous requests for one key
       creating one container; a template change renaming instead of
       creating; a hand-renamed container not being renamed back; a deleted
       container being recreated; migrations; newer-schema refusal.
-- [ ] Extend the local headless load test to create a container through
+- [x] Extend the local headless load test to create a container through
       the registry and reuse it on a second call.
 
 <!--docz:tasks:end-->
@@ -314,33 +336,43 @@ can be given access to a portal or tenant, but does not yet act on it.
 <!--docz:tasks:start-->
 #### Tasks
 
-- [ ] Toolbar button: on click, read the current tab's address through
+- [x] Toolbar button: on click, read the current tab's address through
       `activeTab` and open the options page, on the add form with the
       address filled in when it is an unenrolled portal or Okta admin
       console.
-- [ ] Options page shell (`options.html`, `options.js`, plain CSS that
+- [x] Options page shell (`options.html`, `options.js`, plain CSS that
       follows Firefox's light and dark themes) with the Organizations
       section only.
-- [ ] Add form: address, required label, and for a portal a region chosen
+- [x] Add form: address, required label, and for a portal a region chosen
       from `regions.json`. The label is prefilled with a suggestion for
       Okta and left empty for a portal.
-- [ ] The Add button calls `permissions.request` as the first thing in its
+- [x] The Add button calls `permissions.request` as the first thing in its
       click handler, for exactly the addresses `core/enrol.js` returns,
       then saves the organization only if access was granted.
-- [ ] Organizations list: address, region, label, and whether access is
+- [x] Organizations list: address, region, label, and whether access is
       currently granted; edit label; change region; grant access again;
       remove.
-- [ ] Removing an organization revokes its addresses, keeping a region's
+- [x] Removing an organization revokes its addresses, keeping a region's
       API address while another enrolled portal uses it.
-- [ ] Listen for `permissions.onRemoved` and `onAdded`, and re-check with
+- [x] Listen for `permissions.onRemoved` and `onAdded`, and re-check with
       `permissions.contains` at startup, so a grant changed in the add-on
       manager is reflected.
-- [ ] Unit tests for the enrolment decisions: which addresses to request,
+- [x] Unit tests for the enrolment decisions: which addresses to request,
       which to revoke on removal with a shared region, and status after a
       revoked grant.
-- [ ] By hand: enrol a portal and an Okta tenant, check the prompt names
+- [x] By hand: enrol a portal and an Okta tenant, check the prompt names
       exactly the expected addresses, revoke one in the add-on manager and
       see it marked, then remove both and confirm no site access remains.
+      **Result (Firefox 160):** all as expected, run by the same headless
+      script as the phase 1 checks. The revocation was made through the
+      call the add-on manager itself makes; the card changed to "Needs
+      access" and "Grant access again" restored it.
+
+The run found one bug. Removing an organization gave up its addresses
+before deleting its record; that made the background script re-check access
+and write the record back, so the organization reappeared with no access.
+The record is now deleted first, and a region change is saved before the
+old address is given up. Both orders are pinned by tests.
 
 <!--docz:tasks:end-->
 
@@ -368,31 +400,31 @@ portals.
 <!--docz:tasks:start-->
 #### Tasks
 
-- [ ] `background/index.js`: register every listener synchronously at the
+- [x] `background/index.js`: register every listener synchronously at the
       top level, using the result of the phase 1 check to decide whether
       they are re-registered when access is granted.
-- [ ] Federation listener: match `GET /federation/console` with both
+- [x] Federation listener: match `GET /federation/console` with both
       parameters on an enrolled portal's region API host; attach the
       response filter synchronously; buffer the body.
-- [ ] On completion, run `core/federation.js`; on success, get or create
+- [x] On completion, run `core/federation.js`; on success, get or create
       the container and open the sign-in URL beside the requesting tab; on
       any failure, write the buffered body back unchanged.
-- [ ] Close the requesting tab only when it is a shortcut tab.
-- [ ] Account-list listener: pass the response through as it arrives, keep
+- [x] Close the requesting tab only when it is a shortcut tab.
+- [x] Account-list listener: pass the response through as it arrives, keep
       a copy, and save names with the portal they came from.
-- [ ] When a name arrives for an account whose container is named with the
+- [x] When a name arrives for an account whose container is named with the
       account ID, rename the container in place.
-- [ ] Use the portal's label as `{org}` in the container name.
-- [ ] Warning badge on the toolbar button after a failed hand-off, with the
+- [x] Use the portal's label as `{org}` in the container name.
+- [x] Warning badge on the toolbar button after a failed hand-off, with the
       reason in the tooltip and on the options page; cleared when viewed.
-- [ ] Wrong-region warning: a shortcut tab in an enrolled portal's
+- [x] Wrong-region warning: a shortcut tab in an enrolled portal's
       container with no federation request seen within a few seconds.
-- [ ] Respect the "AWS consoles" switch in settings.
-- [ ] Never log or store a token; logging helpers take field names only.
-- [ ] Unit tests for the listener glue with the fake browser: success,
+- [x] Respect the "AWS consoles" switch in settings.
+- [x] Never log or store a token; logging helpers take field names only.
+- [x] Unit tests for the listener glue with the fake browser: success,
       each failure path releasing the body, the shortcut-tab rule, and
       rename on name arrival.
-- [ ] By hand, against a real portal: a role click, a second account, the
+- [ ] Waiting on you (the "(real)" items in `extension/TESTING.md`, section 2): By hand, against a real portal: a role click, a second account, the
       same role twice, a bookmarked shortcut link, a role click after the
       background script has gone idle with DevTools closed, and a portal
       enrolled with the wrong region.
@@ -424,25 +456,33 @@ container. After this phase the extension does everything the spike did.
 <!--docz:tasks:start-->
 #### Tasks
 
-- [ ] Routing listener on top-level requests: gather the request facts,
+- [x] Routing listener on top-level requests: gather the request facts,
       call `core/routing.js`, and on a move decision open the URL in the
       target's container and cancel the original request.
-- [ ] Close the source tab only when it was empty.
-- [ ] On any failure to create the container or open the tab, let the
+- [x] Close the source tab only when it was empty.
+- [x] On any failure to create the container or open the tab, let the
       original request proceed.
-- [ ] Respect the "AWS access portals" and "Okta admin consoles" switches.
-- [ ] After enrolment succeeds, reopen the tab it was started from in its
+- [x] Respect the "AWS access portals" and "Okta admin consoles" switches.
+- [x] After enrolment succeeds, reopen the tab it was started from in its
       new container.
-- [ ] Unit tests for the listener glue: move, each leave-alone reason, and
+- [x] Unit tests for the listener glue: move, each leave-alone reason, and
       the failure path.
-- [ ] By hand: a portal and two Okta tenants from ordinary tabs; sign-in
+- [ ] Waiting on you for sign-in, several sessions at once and the Okta dashboard tile (the "(real)" items in `extension/TESTING.md`, section 3). Routing a portal and a tenant from ordinary tabs, `<org>.okta.com` not moving, and a tab already in another container staying there were run against a headless Firefox 160 and passed: By hand: a portal and two Okta tenants from ordinary tabs; sign-in
       completing inside each container; two tenants and two portals signed
       in at once; `<org>.okta.com` not moving; a portal launched from an
       Okta dashboard tile in an ordinary tab; a portal opened from inside
       a container staying there.
-- [ ] Delete `spike/`, the `spike-*` recipes and the `spike` labeler path.
-- [ ] Note in this document that containers created by the spike are not
+- [x] Delete `spike/`, the `spike-*` recipes and the `spike` labeler path.
+- [x] Note in this document that containers created by the spike are not
       adopted and are removed by hand.
+
+**Containers left by the spike.** The spike looked containers up by name
+and created them without recording them. The extension never adopts a
+container it did not create, so those containers are not reused: the first
+use of each portal, tenant or console creates a new one alongside. Delete
+the spike's containers once, by hand, in Firefox's settings under Tabs,
+Manage Containers. Sessions in them are lost; sign in again in the new
+containers.
 
 <!--docz:tasks:end-->
 
@@ -467,28 +507,44 @@ The rest of the settings, on top of the Organizations section from phase 4.
 <!--docz:tasks:start-->
 #### Tasks
 
-- [ ] Naming section: the three templates, validated as typed, with a live
+- [x] Naming section: the three templates, validated as typed, with a live
       preview built from an example or a real managed container.
-- [ ] Colours section: the ordered rule list with add, remove and reorder.
-- [ ] Behaviour section: the three switches.
-- [ ] Saving labels, templates or colour rules recomputes every managed
+- [x] Colours section: the ordered rule list with add, remove and reorder.
+- [x] Behaviour section: the three switches.
+- [x] Saving labels, templates or colour rules recomputes every managed
       container and renames or recolours those that changed, skipping any
       renamed by hand.
-- [ ] Managed containers section: key, name, last used, and whether it was
+- [x] Managed containers section: key, name, last used, and whether it was
       renamed by hand, with a button to hand naming back to the extension.
-- [ ] Cleanup: list managed containers with no open tabs, and remove them
+- [x] Cleanup: list managed containers with no open tabs, and remove them
       only after the list is confirmed.
-- [ ] Backup: export settings and organization labels to a JSON file with
+- [x] Backup: export settings and organization labels to a JSON file with
       `schemaVersion`; import with validation. The container map, account
       names and site access are not exported.
-- [ ] After an import, organizations that lack site access are shown as
+- [x] After an import, organizations that lack site access are shown as
       needing it, with the grant button.
-- [ ] Unit tests: which containers a settings change renames; cleanup
+- [x] Unit tests: which containers a settings change renames; cleanup
       selection; export contents; import validation and rejection of a
       newer schema.
-- [ ] By hand: edit a label and watch containers rename without
+- [x] By hand: edit a label and watch containers rename without
       duplicates; rename one in Firefox and confirm it is left alone; run
-      cleanup; export, reset, import.
+      cleanup; export, reset, import. **Result (Firefox 160):** all as
+      expected, run by the same headless script as the earlier checks,
+      through the real options page. A label edit and a template change
+      renamed containers in place with the count unchanged; a container
+      renamed outside the extension kept its name, was shown as "Renamed
+      by hand", and took its computed name back when asked; a new colour
+      rule recoloured without renaming; with a switch off its kind was left
+      alone; cleanup listed only the container with no open tabs and
+      removed it after confirmation; an export downloaded as a file with no
+      container IDs or account data; a newer-version file and a file that
+      was not JSON changed nothing and said why; a good file was applied
+      and its new organization was shown as needing access.
+
+The run found one bug. Firefox 160 reports the container colour
+"turquoise" as "cyan", so a turquoise container looked out of date on every
+use and had its colour set again each time. The two names are now treated
+as the same colour.
 
 <!--docz:tasks:end-->
 
@@ -515,29 +571,32 @@ use and test it. Nothing in this phase involves Mozilla.
 <!--docz:tasks:start-->
 #### Tasks
 
-- [ ] Write `extension/TESTING.md`: the manual checklist, gathered from the
+- [x] Write `extension/TESTING.md`: the manual checklist, gathered from the
       "by hand" tasks above.
-- [ ] Rewrite `README.md` for users: what it does, how to load it from
+- [x] Rewrite `README.md` for users: what it does, how to load it from
       `about:debugging`, what has to be redone after a Firefox restart, how
       to enrol a portal and a tenant, what access it holds and why, and
       how to remove it.
-- [ ] Add an icon drawn for this project, for the toolbar button and the
+- [x] Add an icon drawn for this project, for the toolbar button and the
       add-on manager.
-- [ ] Set the committed manifest version to `0.1.0`.
-- [ ] `just package <version>`: copy `extension/` without its tests to a
+- [x] Set the committed manifest version to `0.1.0`.
+- [x] `just package <version>`: copy `extension/` without its tests to a
       build directory, set the version in the copy with `jq`, and produce
       a `.zip` with `web-ext build`.
-- [ ] Based on the phase 1 restart check, make the after-restart routine as
+- [x] Based on the phase 1 restart check, make the after-restart routine as
       short as it can be: one reload from `about:debugging`, and if access
       is lost, one button on the options page that asks for every enrolled
-      organization's access again.
-- [ ] Run the full manual checklist against the extension loaded from a
+      organization's access again. The restart check showed that settings,
+      access and containers all survive, so the routine is the one reload.
+      The button is there for the cases where access is missing anyway:
+      after an import, or after grants were removed in the add-on manager.
+- [ ] Waiting on you (needs the real portal and tenants, after the merge): Run the full manual checklist against the extension loaded from a
       clean checkout of `main`.
-- [ ] Merge the final pull request with the `minor` label, so the release
+- [ ] Waiting on you (nothing has been pushed; pushing and merging are yours to ask for): Merge the final pull request with the `minor` label, so the release
       workflow tags `v0.1.0` and creates the GitHub release.
-- [ ] Use it daily. Record problems as issues, and note here anything that
+- [ ] Waiting on you: Use it daily. Record problems as issues, and note here anything that
       should change before signing is taken up.
-- [ ] Set DESIGN-0001 to Implemented and this document to Completed.
+- [ ] Waiting on the four tasks above: Set DESIGN-0001 to Implemented and this document to Completed.
 
 <!--docz:tasks:end-->
 
@@ -606,21 +665,21 @@ third platform check in phase 1.
 <!--docz:testing:start-->
 ## Testing Plan
 
-- [ ] Unit tests for every function in `core/`, with the cases named in
+- [x] Unit tests for every function in `core/`, with the cases named in
       DESIGN-0001's testing strategy.
-- [ ] Unit tests for storage migrations and the registry against the
+- [x] Unit tests for storage migrations and the registry against the
       browser fake.
-- [ ] Unit tests for the listener glue in phases 5 and 6 against the
+- [x] Unit tests for the listener glue in phases 5 and 6 against the
       browser fake.
-- [ ] Source checks enforcing no network calls, no cookies API, no dynamic
+- [x] Source checks enforcing no network calls, no cookies API, no dynamic
       code, and that only the registry manages containers.
-- [ ] Manifest check that the optional host permissions match
+- [x] Manifest check that the optional host permissions match
       `regions.json`.
-- [ ] The headless load test, run locally with `just smoke` before each
+- [x] The headless load test, run locally with `just smoke` before each
       phase is called complete.
-- [ ] The manual checklist, run at the end of phases 5, 6 and 7 for the
+- [ ] Partly done (everything not marked "(real)" in `extension/TESTING.md` was run against a headless Firefox 160; the "(real)" items are waiting on you): The manual checklist, run at the end of phases 5, 6 and 7 for the
       parts that exist, and in full in phase 8.
-- [ ] A diff review for real identifiers before every commit.
+- [x] A diff review for real identifiers before every commit.
 
 <!--docz:testing:end-->
 

@@ -1,0 +1,7 @@
+{
+  "signInToken": "EXAMPLE-TOKEN",
+  "signInFederationLocation": "https://signin.aws.amazon.com/federation",
+  "destination": "https://us-east-1.console.aws.amazon.com/ec2/home",
+  "expiresIn": 900,
+  "somethingNew": { "nested": true }
+}

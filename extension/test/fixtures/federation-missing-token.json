@@ -1,0 +1,4 @@
+{
+  "signInFederationLocation": "https://us-west-2.signin.aws.amazon.com/federation",
+  "destination": "https://console.aws.amazon.com/"
+}

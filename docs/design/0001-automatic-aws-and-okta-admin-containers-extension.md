@@ -323,14 +323,12 @@ Details:
   the region API addresses and the Okta base domains under
   `optional_host_permissions`. That makes them requestable; it grants
   nothing. The extension then asks for the one specific portal or admin
-  address. Requesting a single address covered by
-  a declared wildcard is expected to work in Firefox but has not been
-  tested; it is the first thing checked in rollout step 1. If it does not
-  work, enrolment grants the whole of `awsapps.com`, or the tenant's Okta
-  base domain, instead.
+  address. Firefox grants a single address covered by a declared wildcard,
+  and its prompt names only that address (confirmed on Firefox 160).
 - **Removing a portal** revokes both addresses, unless another enrolled
   portal shares the region. **Removing a tenant** revokes its admin
-  address.
+  address. The record is deleted before the addresses are given up, so the
+  access check that follows a revocation cannot write it back.
 - **Access revoked in Firefox.** A user can remove a grant in the add-on
   manager. The extension listens for that and marks the portal as needing
   access again, instead of failing silently.
@@ -581,6 +579,12 @@ event, so it must hold no state in memory that it cannot rebuild.
   is already being held.
 - The only in-memory state is the per-key creation lock, which is safe to
   lose.
+- Listeners are registered once, with the widest address patterns the
+  manifest allows to be requested. Firefox delivers a request to them only
+  if its address has been granted, and checks that when the request
+  happens, so a listener registered before a portal was enrolled handles
+  that portal as soon as it is. Confirmed on Firefox 160; nothing is
+  registered again when access is granted.
 
 ### Manifest and permissions
 
@@ -695,26 +699,40 @@ Residual risks:
 ```text
 extension/
   manifest.json           checked in; host permissions written by a script
+  regions.json            AWS regions; the source for the two generated lists
+  icons/
   src/
     core/                 pure logic, no browser APIs
-      classify.js
-      routing.js
-      federation.js
-      naming.js
+      types.js            shared JSDoc types
+      keys.js             target keys
+      classify.js         is this address an enrolled portal or admin console
+      routing.js          should this navigation move
+      federation.js       validate the sign-in exchange, build the sign-in URL
+      accounts.js         account names from the portal's account list
+      naming.js           templates, colour rules, icons
+      enrol.js            which addresses to request and to give up
+      regions.js          generated from regions.json
+    storage/
+      schema.js           the stored records, defaults and migrations
+      store.js            reads and writes behind one cached promise
+      backup.js           export and import
     background/
       index.js            listener registration
-      registry.js
-      accounts.js
-    storage/
-      schema.js           types and migrations
-      store.js
+      registry.js         the only code that creates or renames containers
+      aws.js              console hand-off and account names
+      navigation.js       portal and Okta admin routing
+      response.js         reading a response through a stream filter
+      notices.js          the toolbar warning badge
+      access.js           keeps "access granted" in step with Firefox
+      tabs.js
     options/
-      options.html
-      options.js
-  regions.json            AWS regions for portal API host permissions
-  test/
-    core/                 unit tests with sanitized fixtures
-    smoke/                headless Firefox load test
+      options.html, options.css, options.js
+      organizations.js, naming.js, colours.js, behaviour.js,
+      containers.js, backup.js, notice.js   one module per section
+      enrolment.js        what the page does to organizations, without a page
+      dom.js
+  types/browser.d.ts      declarations for the browser APIs that are called
+  test/                   unit tests, fixtures, the browser fake, smoke test
 ```
 
 Plain JavaScript modules with JSDoc types, checked by `tsc` and packaged
@@ -787,6 +805,7 @@ erDiagram
         string key
         string cookieStoreId
         string kind
+        string orgKey
         string managedName
         bool userRenamed
         string createdAt
@@ -799,7 +818,12 @@ erDiagram
 | Settings | single record | Templates, switches and colour rules. The only part included in an export, along with organization labels. |
 | Organization | `aws-portal:<host>` or `okta-admin:<host>` | Created when a portal or tenant is enrolled, with its label, and for a portal its region. `accessGranted` tracks whether Firefox still grants its addresses. |
 | Account | account ID | Learned from the portal's account list. |
-| Managed container | target key | `managedName` is the name the extension last set; comparing it with the live name detects a hand rename. |
+| Managed container | target key | `managedName` is the name the extension last set; comparing it with the live name detects a hand rename. `orgKey` is the organization whose label is in the name, so the name can be recomputed when the label changes. |
+| Notice | single record | The message behind the toolbar button's warning badge, with its time. A fixed sentence chosen by the code; cleared once the options page has shown it. |
+
+As built, `schemaVersion` is a storage key of its own beside the settings
+record, and a colour rule's `match` holds one or more substrings separated
+by commas.
 
 Schema changes are handled by numbered migrations run when storage is first
 read. Data written by a newer version than the running code is not touched,
@@ -870,7 +894,8 @@ are deleted by hand once.
 Each step is one or more pull requests. Steps 1 to 5 release nothing
 (`dont-release`). Step 6 is the first version. Until signing is done, the
 extension is loaded from `about:debugging` and has to be loaded again
-after each Firefox restart.
+after each Firefox restart. Its settings, granted addresses and containers
+survive the restart (confirmed on Firefox 160).
 
 Rollback at any point is uninstalling the extension. Containers it created
 remain, with their sessions, and can be removed in Firefox's container
