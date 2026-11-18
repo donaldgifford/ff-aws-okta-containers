@@ -590,10 +590,12 @@ use and test it. Nothing in this phase involves Mozilla.
       access and containers all survive, so the routine is the one reload.
       The button is there for the cases where access is missing anyway:
       after an import, or after grants were removed in the add-on manager.
-- [ ] Waiting on you (needs the real portal and tenants, after the merge): Run the full manual checklist against the extension loaded from a
+- [ ] Waiting on you (needs the real portal and tenants; `main` now has the merge): Run the full manual checklist against the extension loaded from a
       clean checkout of `main`.
-- [ ] Waiting on you (nothing has been pushed; pushing and merging are yours to ask for): Merge the final pull request with the `minor` label, so the release
-      workflow tags `v0.1.0` and creates the GitHub release.
+- [x] Merge the final pull request with the `minor` label, so the release
+      workflow tags `v0.1.0` and creates the GitHub release. Done on
+      2026-11-14: pull request 9 merged, `v0.1.0` tagged and released. The
+      release carries no built package; install from a checkout.
 - [ ] Waiting on you: Use it daily. Record problems as issues, and note here anything that
       should change before signing is taken up.
 - [ ] Waiting on the four tasks above: Set DESIGN-0001 to Implemented and this document to Completed.
