@@ -173,18 +173,18 @@ GitHub but never submitted to Mozilla.
       `dist/ff-aws-okta-containers-<version>.xpi`. It reads
       `WEB_EXT_API_KEY` and `WEB_EXT_API_SECRET` from the environment and
       stops with a clear message when either is missing.
-- [ ] **(you)** Sign in to addons.mozilla.org with a Mozilla account,
+- [x] **(you)** Sign in to addons.mozilla.org with a Mozilla account,
       accept the developer agreement, and generate API credentials at
       <https://addons.mozilla.org/developers/addon/api/key/>.
 - [ ] **(you)** Export settings from the options page as a safeguard.
-- [ ] **(you)** Run `just sign 0.1.0` from `main` with the credentials in
+- [x] **(you)** Run `just sign 0.1.0` from `main` with the credentials in
       the environment, exported in that terminal session only and written
       to no file. The extension source on
       `main` is the same as at tag `v0.1.0`.
 - [ ] Record: how long signing took; the file name `web-ext` wrote;
       whether any lint message stopped it; and the full output with the
       credentials removed.
-- [ ] **(you)** Run `just sign 0.1.0` a second time and record what
+- [x] **(you)** Run `just sign 0.1.0` a second time and record what
       happens for a version that is already uploaded. Fix the recipe if
       it can recover the signed file.
 - [ ] **(you)** Remove the temporary add-on, install the signed file from
@@ -197,6 +197,32 @@ GitHub but never submitted to Mozilla.
       starting them.
 
 <!--docz:tasks:end-->
+
+**Results so far (2026-11-24, web-ext 10.8.0):**
+
+- The first submission of 0.1.0 was accepted and signed in one run of
+  `just sign 0.1.0`. `web-ext` printed "Waiting for validation...",
+  "Waiting for approval..." and "Signed xpi downloaded", with no lint
+  message and no prompt.
+- `web-ext` names the file `<add-on hash>-<version>.xpi`, not after the
+  extension. The recipe renames it, as planned.
+- The signed file holds the same 35 files as the unsigned zip plus five
+  under `META-INF/` (`cose.manifest`, `cose.sig`, `manifest.mf`,
+  `mozilla.rsa`, `mozilla.sf`). Its manifest carries the expected ID and
+  version. Nothing from `test/`, `types/` or `regions.json` is in it.
+- Signing took under five minutes: the two runs were started five
+  minutes apart and the first had finished before the second began. The
+  exact figure comes from the job timestamps of the first workflow run in
+  phase 3.
+- A second run for the same version is refused during validation with
+  `Submission failed (2): Conflict` and `Version 0.1.0 already exists.`
+  The recipe exits non-zero and leaves the earlier file in `dist/`
+  untouched. `web-ext` offers no way to fetch the file that was already
+  signed, so the recipe is unchanged and recovery stays as decided in
+  open question 5: download it from the AMO developer page by hand.
+- Consequence for phase 3: a `sign` job that failed after the upload
+  cannot be fixed by re-running it. A re-run only helps when the failure
+  came before the upload.
 
 <!--docz:criteria:start-->
 #### Success Criteria
