@@ -9,6 +9,8 @@ this project adheres to [Semantic Versioning](https://semver.org/).
 ### Features
 
 - *(release)* Add stage and sign recipes
+- *(manifest)* Point updates at the latest GitHub release
+- *(release)* Generate and check the update feed
 
 ### Documentation
 
@@ -17,6 +19,7 @@ this project adheres to [Semantic Versioning](https://semver.org/).
 - *(impl)* Plan unlisted signing and the update feed
 - *(impl)* Record the hand-signed 0.1.0 trial
 - Record the signed 0.1.0 install and the trial results
+- *(impl)* Record the update feed results
 
 ## [0.1.0] - 2026-11-14
 
