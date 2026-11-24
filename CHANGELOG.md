@@ -16,6 +16,7 @@ this project adheres to [Semantic Versioning](https://semver.org/).
 - *(inv)* Investigate unlisted signing and self-hosted updates
 - *(impl)* Plan unlisted signing and the update feed
 - *(impl)* Record the hand-signed 0.1.0 trial
+- Record the signed 0.1.0 install and the trial results
 
 ## [0.1.0] - 2026-11-14
 
