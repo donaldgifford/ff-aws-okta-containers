@@ -20,6 +20,15 @@ test("the manifest grants no site access at install", async () => {
   assert.equal(manifest.content_scripts, undefined);
 });
 
+test("updates come from this repository's latest release", async () => {
+  const manifest = await readJson("../manifest.json");
+
+  assert.equal(
+    manifest.browser_specific_settings.gecko.update_url,
+    "https://github.com/donaldgifford/ff-aws-okta-containers/releases/latest/download/updates.json",
+  );
+});
+
 test("optional host permissions match the region list", async () => {
   const manifest = await readJson("../manifest.json");
   const { regions } = await readJson("../regions.json");
