@@ -259,37 +259,55 @@ without touching Mozilla.
 <!--docz:tasks:start-->
 #### Tasks
 
-- [ ] Add `browser_specific_settings.gecko.update_url` to the manifest,
+- [x] Add `browser_specific_settings.gecko.update_url` to the manifest,
       set to the feed address above. It is committed, not added at
       packaging time.
-- [ ] Add `--self-hosted` to the `ext-lint` recipe. Without it,
+- [x] Add `--self-hosted` to the `ext-lint` recipe. Without it,
       `web-ext lint` reports `update_url` as not allowed, because that is
       true for listed add-ons, and the recipe treats warnings as errors.
-- [ ] Extend `extension/test/manifest.test.js`: the `update_url` is the
+- [x] Extend `extension/test/manifest.test.js`: the `update_url` is the
       exact feed address, it is HTTPS, and it is on `github.com` under
       this repository.
-- [ ] Write `scripts/gen-updates.mjs`. Given a version and a signed
+- [x] Write `scripts/gen-updates.mjs`. Given a version and a signed
       `.xpi`, it writes `updates.json` with one entry for the add-on ID
       read from the manifest: `version`, `update_link` pointing at
       `releases/download/v<version>/ff-aws-okta-containers-<version>.xpi`,
       `update_hash` as `sha256:` plus the file's digest, and
       `applications.gecko.strict_min_version` copied from the manifest.
-- [ ] Have the script open the `.xpi`, read its `manifest.json`, and
+- [x] Have the script open the `.xpi`, read its `manifest.json`, and
       refuse to continue unless the ID and version match and
       `META-INF/` is present. An unsigned or mislabelled file never
       reaches a release.
-- [ ] Unit test the script's pure parts: the entry it builds, the link
+- [x] Unit test the script's pure parts: the entry it builds, the link
       shape, the hash format, a version that is not `X.Y.Z`, and each
       refusal.
-- [ ] Add an `updates-json <version>` recipe that runs the script against
+- [x] Add an `updates-json <version>` recipe that runs the script against
       `dist/` and writes `dist/updates.json`.
-- [ ] Add a CI step that runs `just package` and the script's
+- [x] Add a CI step that runs `just package` and the script's
       non-signature checks against the unsigned zip, so the release path
       is exercised on every pull request without credentials.
-- [ ] Confirm `git status` stays clean after the recipes run. `dist/` is
+- [x] Confirm `git status` stays clean after the recipes run. `dist/` is
       already ignored, so no ignore rule should be needed.
 
 <!--docz:tasks:end-->
+
+**Results (2026-11-24):**
+
+- Without `--self-hosted`, `web-ext lint` reports `update_url` as an
+  error (`MANIFEST_UPDATE_URL`), not a warning. With it, the lint is
+  clean.
+- `just updates-json 0.1.0`, run against the file signed in phase 1,
+  wrote a feed whose `update_hash` equals `shasum -a 256` of that file.
+- The script refused the unsigned zip ("not signed by Mozilla") and
+  refused the signed 0.1.0 when asked to describe it as 0.2.0.
+- The script reads the package with `unzip`, which the CI runners and
+  macOS both have, so no zip-reading code or dependency was added. The
+  repository address is taken from the manifest's `update_url`, so the
+  feed and the file it names cannot point at different places.
+- CI runs a new `just feed-check` recipe: it stages a package at version
+  0.0.0, builds the feed with the signature check off, and then confirms
+  the same package is refused with the check on.
+- `just smoke` still passes with the `update_url` in the manifest.
 
 <!--docz:criteria:start-->
 #### Success Criteria
