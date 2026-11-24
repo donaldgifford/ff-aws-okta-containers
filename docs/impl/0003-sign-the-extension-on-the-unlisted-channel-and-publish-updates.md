@@ -181,19 +181,19 @@ GitHub but never submitted to Mozilla.
       the environment, exported in that terminal session only and written
       to no file. The extension source on
       `main` is the same as at tag `v0.1.0`.
-- [ ] Record: how long signing took; the file name `web-ext` wrote;
+- [x] Record: how long signing took; the file name `web-ext` wrote;
       whether any lint message stopped it; and the full output with the
       credentials removed.
 - [x] **(you)** Run `just sign 0.1.0` a second time and record what
       happens for a version that is already uploaded. Fix the recipe if
       it can recover the signed file.
-- [ ] **(you)** Remove the temporary add-on, install the signed file from
+- [x] **(you)** Remove the temporary add-on, install the signed file from
       `about:addons`, gear menu, "Install Add-on From File", and record:
       whether organizations, granted access, settings and containers
       survived; and whether the extension is still there after a restart.
-- [ ] Write the results into INV-0002 under "Not yet verified", and set
+- [x] Write the results into INV-0002 under "Not yet verified", and set
       it to Concluded once the redirect check in phase 4 is also in.
-- [ ] If a result contradicts this plan, change the later phases before
+- [x] If a result contradicts this plan, change the later phases before
       starting them.
 
 <!--docz:tasks:end-->
@@ -223,6 +223,15 @@ GitHub but never submitted to Mozilla.
 - Consequence for phase 3: a `sign` job that failed after the upload
   cannot be fixed by re-running it. A re-run only helps when the failure
   came before the upload.
+- The signed 0.1.0 was attached to the `v0.1.0` GitHub release so it
+  could be fetched from another machine. Installed there in release
+  Firefox, it works, and it is a permanent install.
+- Not reported: whether a temporarily loaded copy's organizations,
+  granted access, settings and containers carry over when the signed file
+  replaces it. The settings export task stays open with it. Phase 4
+  installs a signed build over another and loads a checkout beside it,
+  which covers the same ground.
+- Nothing contradicted the plan. Phases 2 to 4 are unchanged.
 
 <!--docz:criteria:start-->
 #### Success Criteria

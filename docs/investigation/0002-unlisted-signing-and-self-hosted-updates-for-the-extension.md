@@ -240,17 +240,16 @@ fetched by Firefox itself.
 
 ### Not yet verified
 
-These need one real signing run:
+These needed a real signing run. Version 0.1.0 was signed by hand on
+2026-11-24 with web-ext 10.8.0; the details are in IMPL-0003, phase 1.
 
-- How long unlisted signing takes for this extension.
-- Whether `web-ext sign` treats any of our `web-ext lint` output as a failure.
-- What `web-ext sign` does when re-run for a version already uploaded.
-- That Firefox follows GitHub's redirects for the update feed in practice.
-  Lowering `extensions.update.interval` to 120 seconds makes this quick to
-  watch.
-- That a signed install replaces a temporarily loaded copy and keeps its
-  settings and containers. The add-on ID is the same, so it should. Exporting
-  settings first is a cheap safeguard.
+| Point | Result |
+| ----- | ------ |
+| How long unlisted signing takes | Under five minutes. An exact figure comes from the first workflow run. |
+| Whether `web-ext sign` fails on our lint output | No. It validated and signed with no message. |
+| Re-running for a version already uploaded | Refused: `Conflict`, "Version 0.1.0 already exists." `web-ext` cannot fetch the file signed earlier. |
+| Firefox follows GitHub's redirects for the feed | Still open. Checked in IMPL-0003, phase 4. |
+| A signed install keeps a temporary copy's settings and containers | Still open. The signed file installs permanently and works; carry-over from a temporary copy was not reported. |
 
 <!--docz:findings:end-->
 
