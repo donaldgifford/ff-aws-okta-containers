@@ -9,6 +9,8 @@ this project adheres to [Semantic Versioning](https://semver.org/).
 ### Documentation
 
 - *(impl)* Record the v0.1.0 merge and release
+- *(inv)* Investigate unlisted signing and self-hosted updates
+- *(impl)* Plan unlisted signing and the update feed
 
 ## [0.1.0] - 2026-11-14
 
