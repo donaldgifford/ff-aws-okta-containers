@@ -6,11 +6,16 @@ this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [unreleased]
 
+### Features
+
+- *(release)* Add stage and sign recipes
+
 ### Documentation
 
 - *(impl)* Record the v0.1.0 merge and release
 - *(inv)* Investigate unlisted signing and self-hosted updates
 - *(impl)* Plan unlisted signing and the update feed
+- *(impl)* Record the hand-signed 0.1.0 trial
 
 ## [0.1.0] - 2026-11-14
 
