@@ -1,7 +1,7 @@
 ---
 id: IMPL-0003
 title: "Sign the extension on the unlisted channel and publish updates"
-status: Draft
+status: In Progress
 author: Donald Gifford
 created: 2026-11-24
 ---
@@ -163,11 +163,11 @@ GitHub but never submitted to Mozilla.
 <!--docz:tasks:start-->
 #### Tasks
 
-- [ ] Split the `package` recipe: a `stage <version> <dir>` recipe that
+- [x] Split the `package` recipe: a `stage <version> <dir>` recipe that
       copies `extension/` into a directory, removes `test/`, `types/` and
       `regions.json`, and sets the version; `package` then builds its zip
       from a staged directory.
-- [ ] Add a `sign <version>` recipe: stage into a temporary directory,
+- [x] Add a `sign <version>` recipe: stage into a temporary directory,
       run `web-ext sign --channel unlisted` with the artifacts directory
       set to `dist/`, and leave the result at
       `dist/ff-aws-okta-containers-<version>.xpi`. It reads
