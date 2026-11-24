@@ -83,24 +83,65 @@ ext-run:
 smoke:
     @node extension/test/smoke/run.mjs
 
-# Build dist/ff-aws-okta-containers-<version>.zip, e.g. `just package 0.1.0`
+# Copy what ships into <dir> at <version>, e.g. `just stage 0.1.0 /tmp/staged`
 [group('extension')]
-package version:
+stage version dir:
     #!/usr/bin/env bash
     set -euo pipefail
     if [[ ! "{{ version }}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
       echo "version must look like 1.2.3" >&2
       exit 1
     fi
+    mkdir -p "{{ dir }}"
+    if [[ -n "$(ls -A "{{ dir }}")" ]]; then
+      echo "{{ dir }} is not empty" >&2
+      exit 1
+    fi
+    cp -R extension/. "{{ dir }}/"
+    # Tests, type declarations and the region source list do not ship.
+    rm -rf "{{ dir }}/test" "{{ dir }}/types" "{{ dir }}/regions.json"
+    jq --arg version "{{ version }}" '.version = $version' \
+      extension/manifest.json > "{{ dir }}/manifest.json"
+
+# Build an unsigned dist/ff-aws-okta-containers-<version>.zip, e.g. `just package 0.1.0`
+[group('extension')]
+package version:
+    #!/usr/bin/env bash
+    set -euo pipefail
     work="$(mktemp -d)"
     trap 'rm -rf "$work"' EXIT
-    cp -R extension/. "$work/"
-    # Tests, type declarations and the region source list do not ship.
-    rm -rf "$work/test" "$work/types" "$work/regions.json"
-    jq --arg version "{{ version }}" '.version = $version' \
-      extension/manifest.json > "$work/manifest.json"
-    web-ext build --source-dir "$work" --artifacts-dir dist --overwrite-dest \
+    "{{ just_executable() }}" stage "{{ version }}" "$work/staged"
+    web-ext build --source-dir "$work/staged" --artifacts-dir dist --overwrite-dest \
       --filename "ff-aws-okta-containers-{{ version }}.zip"
+
+# Have Mozilla sign <version> for self-distribution: dist/ff-aws-okta-containers-<version>.xpi
+[group('extension')]
+sign version:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    # The credentials come from the environment and are never written down.
+    for name in WEB_EXT_API_KEY WEB_EXT_API_SECRET; do
+      if [[ -z "${!name:-}" ]]; then
+        echo "$name is not set. Export the AMO API credentials in this shell first." >&2
+        exit 1
+      fi
+    done
+    work="$(mktemp -d)"
+    trap 'rm -rf "$work"' EXIT
+    "{{ just_executable() }}" stage "{{ version }}" "$work/staged"
+    # Every submission uses up its version number, so this is not a dry run.
+    web-ext sign --channel unlisted --source-dir "$work/staged" \
+      --artifacts-dir "$work/signed" --approval-timeout 1800000
+    shopt -s nullglob
+    signed=("$work"/signed/*.xpi)
+    if [[ "${#signed[@]}" -ne 1 ]]; then
+      echo "expected one signed .xpi from web-ext, found ${#signed[@]}" >&2
+      exit 1
+    fi
+    echo "web-ext wrote: $(basename "${signed[0]}")"
+    mkdir -p dist
+    mv "${signed[0]}" "dist/ff-aws-okta-containers-{{ version }}.xpi"
+    echo "signed: dist/ff-aws-okta-containers-{{ version }}.xpi"
 
 # ─── Docs ───────────────────────────────────────────────────────────
 
