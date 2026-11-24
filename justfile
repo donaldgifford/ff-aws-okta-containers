@@ -70,7 +70,7 @@ manifest-check:
 # Lint what ships in the extension, the way Mozilla does
 [group('extension')]
 ext-lint:
-    @web-ext lint --source-dir extension --warnings-as-errors \
+    @web-ext lint --source-dir extension --warnings-as-errors --self-hosted \
       --ignore-files "test/**" "types/**" "regions.json"
 
 # Run the extension in a fresh temporary Firefox profile
@@ -142,6 +142,32 @@ sign version:
     mkdir -p dist
     mv "${signed[0]}" "dist/ff-aws-okta-containers-{{ version }}.xpi"
     echo "signed: dist/ff-aws-okta-containers-{{ version }}.xpi"
+
+# Write dist/updates.json for the signed dist/ff-aws-okta-containers-<version>.xpi
+[group('extension')]
+updates-json version:
+    @node scripts/gen-updates.mjs "{{ version }}" \
+      "dist/ff-aws-okta-containers-{{ version }}.xpi" dist/updates.json
+
+# Exercise packaging and the update feed without signing anything
+[group('extension')]
+feed-check:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    work="$(mktemp -d)"
+    trap 'rm -rf "$work"' EXIT
+    "{{ just_executable() }}" stage 0.0.0 "$work/staged"
+    web-ext build --source-dir "$work/staged" --artifacts-dir "$work" \
+      --filename package.zip > /dev/null
+    node scripts/gen-updates.mjs 0.0.0 "$work/package.zip" "$work/updates.json" \
+      --allow-unsigned
+    # The same file must be refused once the signature is required.
+    if node scripts/gen-updates.mjs 0.0.0 "$work/package.zip" "$work/updates.json" \
+      2> /dev/null; then
+      echo "an unsigned package was accepted as signed" >&2
+      exit 1
+    fi
+    echo "feed check passed"
 
 # ─── Docs ───────────────────────────────────────────────────────────
 
