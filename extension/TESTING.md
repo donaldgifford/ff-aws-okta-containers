@@ -149,3 +149,24 @@ A temporary add-on is unloaded when Firefox quits.
 - [ ] Remove the extension. The containers it created remain, with their
       sessions, and can be deleted in Firefox's settings under **Tabs**,
       **Manage Containers**.
+
+## 7. Signed install and updates
+
+These need a release, not a checkout. Run them after a change to the release
+workflow, the manifest's `update_url`, or `scripts/gen-updates.mjs`.
+
+- [ ] Download the `.xpi` from the latest release and install it from
+      `about:addons`, gear menu, **Install Add-on From File…**. The prompt
+      lists no site access.
+- [ ] Quit Firefox and start it. The extension is still installed, with no
+      trip to `about:debugging`.
+- [ ] With an older release installed, choose **Check for Updates** in the
+      gear menu of `about:addons`. The version shown for the extension moves
+      to the latest release.
+- [ ] After the update, the organizations, their access, the templates and
+      the managed containers are as they were, and an enrolled address is
+      routed at once.
+- [ ] To watch an update arrive unprompted, set `extensions.update.interval`
+      to `120` in `about:config`, wait a few minutes, and reset it.
+- [ ] `shasum -a 256` of the downloaded file equals the `update_hash` in the
+      release's `updates.json`.
