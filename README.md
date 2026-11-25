@@ -47,6 +47,9 @@ You need Firefox 140 or later on a desktop.
    install.
 4. Pin the toolbar button if you want it in view.
 
+The release also carries `updates.json`. You do not need it: it is the file
+Firefox reads to find later versions.
+
 Containers do not need to be switched on first; installing the extension
 turns them on.
 

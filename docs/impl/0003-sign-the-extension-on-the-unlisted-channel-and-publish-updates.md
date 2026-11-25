@@ -440,7 +440,7 @@ is that further release.
 <!--docz:tasks:start-->
 #### Tasks
 
-- [ ] **(you)** Install the `.xpi` from the phase 3 release over the
+- [x] **(you)** Install the `.xpi` from the phase 3 release over the
       hand-signed 0.1.0, from `about:addons`. This is the last manual
       install: 0.1.0 has no `update_url`.
 - [x] Rewrite the README's "Install" section for the signed file:
@@ -471,6 +471,11 @@ is that further release.
 - [ ] Set INV-0002 to Concluded and this document to Completed.
 
 <!--docz:tasks:end-->
+
+**Results so far (2026-11-25):**
+
+- The `.xpi` from the `v0.2.0` release was installed over the hand-signed
+  0.1.0 from `about:addons`. The add-on manager shows version 0.2.0.
 
 <!--docz:criteria:start-->
 #### Success Criteria
