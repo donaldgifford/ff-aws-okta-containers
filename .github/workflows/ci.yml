@@ -71,3 +71,6 @@ jobs:
 
       - name: Lint extension
         run: just ext-lint
+
+      - name: Package and update feed
+        run: just feed-check
