@@ -338,7 +338,7 @@ workflow-signed release.
 - [x] Create a GitHub environment named `amo-signing`: the author as
       required reviewer, deployments limited to `main`. Done with
       `gh api`.
-- [ ] **(you)** Add `WEB_EXT_API_KEY` and `WEB_EXT_API_SECRET` as secrets
+- [x] **(you)** Add `WEB_EXT_API_KEY` and `WEB_EXT_API_SECRET` as secrets
       of that environment, not of the repository:
       `gh secret set WEB_EXT_API_KEY --env amo-signing`.
 - [x] Add a `sign` job to `.github/workflows/release.yml`, after
@@ -387,6 +387,8 @@ workflow-signed release.
 - The 30-minute approval timeout lives in the `sign` recipe, so a
   hand-run and the workflow behave the same. The job's own limit is 45
   minutes.
+- Both secrets are set on the environment, and the repository itself
+  holds no secrets.
 - The workflow itself cannot be tried before it is merged: it runs only
   on a push to `main`, and a real run uses up a version number.
 
