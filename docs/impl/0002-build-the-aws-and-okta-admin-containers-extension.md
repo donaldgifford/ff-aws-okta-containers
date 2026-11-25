@@ -625,10 +625,13 @@ once the extension has been in daily use for a while.
 
 | Deferred | Why it can wait | What it needs later |
 | -------- | --------------- | ------------------- |
-| Signing on the unlisted channel | Loading by hand is enough to use and test it | A Mozilla developer account, API credentials as repository secrets, a signing step in the release workflow |
-| The signing dry run from IMPL-0001 | Only matters once signing is taken up | Records signing time and whether `data_collection_permissions` is enforced |
-| Automatic updates | Needs a signed build | An `updates.json` attached to each GitHub release, with the manifest's `update_url` pointing at the latest release's copy |
+| Signing on the unlisted channel | Done in [IMPL-0003](0003-sign-the-extension-on-the-unlisted-channel-and-publish-updates.md) | Releases are signed from `v0.2.0` on |
+| The signing dry run from IMPL-0001 | Done in IMPL-0003, phase 1 | Version 0.1.0 was signed by hand; the results are recorded there |
+| Automatic updates | Done in IMPL-0003 | Each release carries `updates.json`, and the manifest's `update_url` points at the latest release's copy |
 | A public listing | Decided after daily use | Listing text, screenshots, and Mozilla's review |
+
+Signing and updates were taken up in IMPL-0003 on 2026-11-24. The paragraph
+below describes the time before that.
 
 What deferring costs: release Firefox only keeps an unsigned extension
 until it restarts. Until signing is done, the extension is loaded again

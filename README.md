@@ -16,8 +16,9 @@ each one in its own automatically created
   ordinary sign-in page (`<org>.okta.com`) is deliberately left alone.
 
 > [!NOTE]
-> Version 0.1.0 is loaded by hand from a checkout. It is not signed and is
-> not in the Mozilla add-ons directory.
+> Releases are signed by Mozilla for self-distribution and install like any
+> other extension. It is not in the Mozilla add-ons directory; you get it
+> from this repository's releases.
 
 ## Why another one
 
@@ -30,26 +31,41 @@ This one is meant to be small enough to read in an afternoon:
   time.
 - It makes no network requests, never touches cookies, runs no code in web
   pages, and never logs or stores a sign-in token. CI fails if the source
-  says otherwise.
+  says otherwise. The only request made on its behalf is Firefox's own daily
+  check for a newer version; see [Updates](#updates).
 
 ## Install
 
-You need Firefox 140 or later.
+You need Firefox 140 or later on a desktop.
 
-1. Clone this repository.
-2. Open `about:debugging#/runtime/this-firefox`.
-3. Choose **Load Temporary Add-on…** and pick `extension/manifest.json`.
+1. Download `ff-aws-okta-containers-<version>.xpi` from the
+   [latest release](https://github.com/donaldgifford/ff-aws-okta-containers/releases/latest).
+2. If Firefox offers to install it, go to step 3. If it only saves the
+   file, open `about:addons`, choose the gear menu, then
+   **Install Add-on From File…**, and pick the file.
+3. Confirm the prompt. It lists no site access, because none is granted at
+   install.
 4. Pin the toolbar button if you want it in view.
+
+The release also carries `updates.json`. You do not need it: it is the file
+Firefox reads to find later versions.
 
 Containers do not need to be switched on first; installing the extension
 turns them on.
 
-### After a Firefox restart
+### Updates
 
-Firefox unloads a temporary add-on when it quits. After a restart, repeat
-steps 2 and 3. Nothing else has to be redone: your organizations, the access
-you granted, your settings and the containers are all kept, along with
-whatever sessions are still valid inside them.
+Updates install themselves. About once a day Firefox reads a small file,
+`updates.json`, from this repository's latest release, and installs a newer
+version if one is listed and its checksum matches. Your organizations, the
+access you granted, your settings and the containers are kept.
+
+To check at once, use the gear menu in `about:addons` and choose
+**Check for Updates**. To stop automatic updates for this extension, open it
+in `about:addons` and set **Allow automatic updates** to **Off**.
+
+To check a download yourself, compare `shasum -a 256` of the file with the
+`update_hash` in the release's `updates.json`.
 
 ## Enrol a portal or a tenant
 
@@ -99,6 +115,10 @@ Its other permissions:
 | `storage` | Keep your settings, labels, account names and the map of containers, in this Firefox profile only. |
 | `webRequest`, `webRequestBlocking`, `webRequestFilterResponse` | Reopen a navigation in a container, and hold the portal's sign-in response while the console is opened. |
 
+Firefox's updater, not the extension, asks GitHub once a day whether a newer
+version exists. That request goes to `github.com` and carries nothing about
+your organizations or settings.
+
 If anything goes wrong while a console is being opened, the extension steps
 aside: the portal signs you in as it would without the extension, and the
 toolbar button shows a warning.
@@ -123,7 +143,7 @@ The design, with its reasoning, is in
 
 1. On the options page, remove each organization. That gives up its site
    access.
-2. Remove the extension in `about:debugging` or the add-on manager.
+2. Remove the extension in the add-on manager, `about:addons`.
 
 The containers it created stay, with their sessions. Delete them in
 Firefox's settings under **Tabs**, **Manage Containers** if you no longer
@@ -137,8 +157,18 @@ just            # list recipes
 just check      # lint, type-check, unit tests, source checks
 just smoke      # load the extension in headless Firefox
 just ext-run    # run it in a throwaway Firefox profile
-just package 0.1.0   # build dist/ff-aws-okta-containers-0.1.0.zip
+just package 0.1.0   # build an unsigned dist/ff-aws-okta-containers-0.1.0.zip
+just feed-check      # exercise packaging and the update feed, unsigned
 ```
+
+To run a checkout instead of a release, open
+`about:debugging#/runtime/this-firefox`, choose **Load Temporary Add-on…**
+and pick `extension/manifest.json`. Firefox unloads a temporary add-on when
+it quits, so load it again after a restart; your settings and containers are
+kept.
+
+Releases are signed and published by the release workflow, not by hand. See
+"Releasing" in [CONTRIBUTING.md](CONTRIBUTING.md).
 
 The manual checklist is in [extension/TESTING.md](extension/TESTING.md). See
 [CONTRIBUTING.md](CONTRIBUTING.md) for how to propose a change.

@@ -364,10 +364,10 @@ workflow-signed release.
       `just updates-json`, and create the release with
       `gh release create`. Adjust for what phase 1 found about
       re-running.
-- [ ] **(you)** Merge this phase's pull request with the `minor` label,
+- [x] **(you)** Merge this phase's pull request with the `minor` label,
       so the release is `0.2.0`, approve the `amo-signing` deployment, and watch the
       run.
-- [ ] Record the run: time waiting for Mozilla, the assets on the
+- [x] Record the run: time waiting for Mozilla, the assets on the
       release, and that
       `releases/latest/download/updates.json` now resolves and names the
       new version.
@@ -391,6 +391,25 @@ workflow-signed release.
   holds no secrets.
 - The workflow itself cannot be tried before it is merged: it runs only
   on a push to `main`, and a real run uses up a version number.
+
+**The first workflow-signed release (2026-11-25, `v0.2.0`):**
+
+- Pull request 14 was merged with `minor`. The run tagged `v0.2.0`,
+  stopped at the `sign` job until the `amo-signing` deployment was
+  approved, and then finished with all three jobs green on the first
+  attempt.
+- Mozilla signed it in 2 minutes 25 seconds, the length of the "Sign"
+  step. The whole `sign` job took 2 minutes 36 seconds after approval.
+- The release has exactly two assets:
+  `ff-aws-okta-containers-0.2.0.xpi` and `updates.json`.
+- `releases/latest/download/updates.json` redirects to the `v0.2.0` copy
+  and then to GitHub's asset storage, and names version 0.2.0.
+- The `sha256` in the published feed equals the digest of the published
+  file, fetched back through the feed's own link.
+- The published file carries Mozilla's five signature files, the
+  expected ID, version 0.2.0 and the `update_url`. Nothing from `test/`,
+  `types/` or `regions.json` is in it.
+- The run's log contains nothing shaped like the API key.
 
 <!--docz:criteria:start-->
 #### Success Criteria
@@ -421,21 +440,21 @@ is that further release.
 <!--docz:tasks:start-->
 #### Tasks
 
-- [ ] **(you)** Install the `.xpi` from the phase 3 release over the
+- [x] **(you)** Install the `.xpi` from the phase 3 release over the
       hand-signed 0.1.0, from `about:addons`. This is the last manual
       install: 0.1.0 has no `update_url`.
-- [ ] Rewrite the README's "Install" section for the signed file:
+- [x] Rewrite the README's "Install" section for the signed file:
       download from the latest release, install from file, and updates
       arrive by themselves. Remove "After a Firefox restart" from the
       user path and keep `about:debugging` under "Development".
-- [ ] Add to the README's "What access it holds, and why" that Firefox
+- [x] Add to the README's "What access it holds, and why" that Firefox
       asks GitHub once a day whether a newer version exists, and that
       this is Firefox's updater, not a request made by the extension.
-- [ ] Add a "Signed install and updates" section to
+- [x] Add a "Signed install and updates" section to
       `extension/TESTING.md`: install from file, restart, and the update
       check below.
-- [ ] Update the README's development commands for the new recipes.
-- [ ] Mark the signing, dry-run and update rows in IMPL-0002's "Deferred"
+- [x] Update the README's development commands for the new recipes.
+- [x] Mark the signing, dry-run and update rows in IMPL-0002's "Deferred"
       table as done here, leaving the public listing row.
 - [ ] **(you)** Merge that pull request with the `patch` label and
       approve the signing job.
@@ -452,6 +471,11 @@ is that further release.
 - [ ] Set INV-0002 to Concluded and this document to Completed.
 
 <!--docz:tasks:end-->
+
+**Results so far (2026-11-25):**
+
+- The `.xpi` from the `v0.2.0` release was installed over the hand-signed
+  0.1.0 from `about:addons`. The add-on manager shows version 0.2.0.
 
 <!--docz:criteria:start-->
 #### Success Criteria
@@ -494,16 +518,16 @@ secrets, and the add-on's entry in the author's AMO developer account.
 <!--docz:testing:start-->
 ## Testing Plan
 
-- [ ] Unit tests for `scripts/gen-updates.mjs`: entry shape, link, hash
+- [x] Unit tests for `scripts/gen-updates.mjs`: entry shape, link, hash
       format, version validation, and each refusal.
-- [ ] Manifest test pinning the `update_url`.
-- [ ] `web-ext lint --self-hosted` with warnings as errors, in
+- [x] Manifest test pinning the `update_url`.
+- [x] `web-ext lint --self-hosted` with warnings as errors, in
       `just check` and CI.
-- [ ] CI exercises `just package` and the feed script on every pull
-      request, with no credentials.
+- [x] CI exercises packaging and the feed script on every pull
+      request, with no credentials, through `just feed-check`.
 - [ ] By hand, phase 1: sign, re-sign, install over the temporary copy,
       restart.
-- [ ] By hand, phase 3: the first workflow-signed release and its two
+- [x] By hand, phase 3: the first workflow-signed release and its two
       assets.
 - [ ] By hand, phase 4: one unattended update, and a temporary load
       beside the signed install.
