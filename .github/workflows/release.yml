@@ -1,30 +1,41 @@
----
 # yaml-language-server: $schema=https://www.schemastore.org/github-workflow.json
 name: Release
 
 # On merge to main:
 #   bump-version — semver bump + tag derived from the merged PR's label
 #                  (major/minor/patch/dont-release, created by labels.sh)
-#   release      — GitHub Release for the new tag
+#   sign         — waits for approval, then has Mozilla sign the tagged
+#                  source on the unlisted channel and writes updates.json
+#   release      — GitHub Release for the new tag, carrying the signed
+#                  .xpi and updates.json
 #
-# A PR labeled `dont-release` produces no tag, so nothing is released.
-# Packaging and signing the extension are added to the release job once
-# the extension exists.
+# A PR labeled `dont-release` produces no tag, so nothing is signed or
+# released.
+#
+# The signing credentials and the token that can write to the repository
+# are never in the same job: `sign` holds the credentials with a read-only
+# token, `release` holds the write token and no credentials.
+#
+# If `sign` fails, the tag exists and the release does not, so installed
+# copies keep reading the previous release's updates.json. See "Releasing"
+# in CONTRIBUTING.md for how to recover.
 on:
   push:
     branches: [main]
 
-# contents: write — bump-version pushes the release tag and the release
-# job creates the GitHub Release.
-permissions:
-  contents: write
-  issues: read
-  pull-requests: read
+# Nothing by default; each job is granted only what it uses.
+permissions: {}
 
 jobs:
   bump-version:
     name: Bump Version
     runs-on: ubuntu-latest
+    # contents: write pushes the release tag. The other two let the action
+    # read the merged pull request and its labels.
+    permissions:
+      contents: write
+      issues: read
+      pull-requests: read
     outputs:
       tag: ${{ steps.bump.outputs.version }}
       skipped: ${{ steps.bump.outputs.skipped }}
@@ -47,18 +58,80 @@ jobs:
           release-notes-prefix: "### RELEASE NOTES"
           with-v: true
 
-  release:
-    name: GitHub Release
+  sign:
+    name: Sign Extension
     runs-on: ubuntu-latest
     needs: bump-version
     if: needs.bump-version.outputs.tag != '' && needs.bump-version.outputs.skipped != 'true'
+    # The environment holds the AMO credentials, asks for approval before
+    # each run, and accepts only `main`.
+    environment: amo-signing
+    permissions:
+      contents: read
+    # `just sign` waits up to 30 minutes for Mozilla.
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ needs.bump-version.outputs.tag }}
+          persist-credentials: false
+
+      - name: Set up mise
+        uses: jdx/mise-action@v4
+        with:
+          experimental: true
+
+      - name: Version from tag
+        id: version
+        env:
+          TAG: ${{ needs.bump-version.outputs.tag }}
+        run: echo "version=${TAG#v}" >> "$GITHUB_OUTPUT"
+
+      # A version can be submitted to Mozilla once. If this step uploaded
+      # and then failed, re-running it will be refused.
+      - name: Sign
+        env:
+          WEB_EXT_API_KEY: ${{ secrets.WEB_EXT_API_KEY }}
+          WEB_EXT_API_SECRET: ${{ secrets.WEB_EXT_API_SECRET }}
+          VERSION: ${{ steps.version.outputs.version }}
+        run: just sign "$VERSION"
+
+      - name: Write updates.json
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: just updates-json "$VERSION"
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: signed-extension
+          path: |
+            dist/ff-aws-okta-containers-${{ steps.version.outputs.version }}.xpi
+            dist/updates.json
+          if-no-files-found: error
+          retention-days: 7
+
+  release:
+    name: GitHub Release
+    runs-on: ubuntu-latest
+    needs: [bump-version, sign]
+    if: needs.bump-version.outputs.tag != '' && needs.bump-version.outputs.skipped != 'true'
+    # contents: write creates the GitHub Release.
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v7
         with:
           ref: ${{ needs.bump-version.outputs.tag }}
 
+      - uses: actions/download-artifact@v8
+        with:
+          name: signed-extension
+          path: dist
+
       - name: Create release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAG: ${{ needs.bump-version.outputs.tag }}
-        run: gh release create "$TAG" --title "$TAG" --generate-notes --verify-tag
+        run: |
+          gh release create "$TAG" --title "$TAG" --generate-notes --verify-tag \
+            "dist/ff-aws-okta-containers-${TAG#v}.xpi" dist/updates.json
