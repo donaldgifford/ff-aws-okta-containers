@@ -16,7 +16,7 @@ Design docs, plans, and implementation docs can reference investigations by ID
 | ID | Title | Status | Date | Author | Link |
 | --- | --- | --- | --- | --- | --- |
 | INV-0001 | Firefox extension for automatic AWS SSO and Okta containers | Concluded | 2026-11-12 | Donald Gifford | [0001-firefox-extension-for-automatic-aws-sso-and-okta-containers.md](0001-firefox-extension-for-automatic-aws-sso-and-okta-containers.md) |
-| INV-0002 | Unlisted signing and self-hosted updates for the extension | Open | 2026-11-24 | Donald Gifford | [0002-unlisted-signing-and-self-hosted-updates-for-the-extension.md](0002-unlisted-signing-and-self-hosted-updates-for-the-extension.md) |
+| INV-0002 | Unlisted signing and self-hosted updates for the extension | Concluded | 2026-11-24 | Donald Gifford | [0002-unlisted-signing-and-self-hosted-updates-for-the-extension.md](0002-unlisted-signing-and-self-hosted-updates-for-the-extension.md) |
 <!-- markdownlint-restore -->
 <!-- END DOCZ AUTO-GENERATED -->
 <!-- BEGIN DOCZ AUTO-GENERATED -->

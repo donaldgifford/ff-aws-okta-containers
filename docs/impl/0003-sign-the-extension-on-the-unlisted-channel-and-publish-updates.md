@@ -1,7 +1,7 @@
 ---
 id: IMPL-0003
 title: "Sign the extension on the unlisted channel and publish updates"
-status: In Progress
+status: Completed
 author: Donald Gifford
 created: 2026-11-24
 ---

@@ -1,7 +1,7 @@
 ---
 id: INV-0002
 title: "Unlisted signing and self-hosted updates for the extension"
-status: Open
+status: Concluded
 author: Donald Gifford
 created: 2026-11-24
 ---
