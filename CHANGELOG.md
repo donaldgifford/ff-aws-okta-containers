@@ -23,6 +23,7 @@ this project adheres to [Semantic Versioning](https://semver.org/).
 - *(impl)* Record the update feed results
 - Describe releasing and how to recover a failed signing
 - *(impl)* Record the signing secrets being set
+- Install from the signed release and describe updates
 
 ## [0.1.0] - 2026-11-14
 
