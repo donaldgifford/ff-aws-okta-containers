@@ -245,11 +245,11 @@ These needed a real signing run. Version 0.1.0 was signed by hand on
 
 | Point | Result |
 | ----- | ------ |
-| How long unlisted signing takes | Under five minutes. An exact figure comes from the first workflow run. |
+| How long unlisted signing takes | Under five minutes by hand; 2 minutes 25 seconds and 3 minutes 23 seconds in the first two workflow runs. |
 | Whether `web-ext sign` fails on our lint output | No. It validated and signed with no message. |
 | Re-running for a version already uploaded | Refused: `Conflict`, "Version 0.1.0 already exists." `web-ext` cannot fetch the file signed earlier. |
-| Firefox follows GitHub's redirects for the feed | Still open. Checked in IMPL-0003, phase 4. |
-| A signed install keeps a temporary copy's settings and containers | Still open. The signed file installs permanently and works; carry-over from a temporary copy was not reported. |
+| Firefox follows GitHub's redirects for the feed | Yes. An installed 0.2.0 updated itself to 0.2.1 from the release feed on 2026-11-25. |
+| A signed install keeps a temporary copy's settings and containers | Not observed. A signed install over a signed install, and an update, both kept them. |
 
 <!--docz:findings:end-->
 
@@ -257,13 +257,16 @@ These needed a real signing run. Version 0.1.0 was signed by hand on
 
 ## Conclusion
 
-**Answer:** Yes, on the evidence read so far. Nothing in Mozilla's requirements
-or in the repository blocks unlisted signing, and a GitHub release asset is a
-workable update feed. The hypothesis holds except for "within minutes", which
-Mozilla does not promise and which has not been measured.
+**Answer:** Yes. Mozilla signs the extension on the unlisted channel in a
+few minutes, the manifest needed only an `update_url`, and an `updates.json`
+attached to each GitHub release works as the update feed: an installed copy
+updated itself from 0.2.0 to 0.2.1 with no manual step.
 
-The investigation stays open until one build has been signed and the points
-under [Not yet verified](#not-yet-verified) are recorded.
+The hypothesis held. Its "within minutes" turned out true in three signings,
+though Mozilla does not promise it.
+
+One point was never observed: whether a signed install keeps the settings of
+a temporarily loaded copy it replaces. It does not affect the answer.
 
 <!--docz:conclusion:end-->
 
