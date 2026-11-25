@@ -22,6 +22,7 @@ this project adheres to [Semantic Versioning](https://semver.org/).
 - Record the signed 0.1.0 install and the trial results
 - *(impl)* Record the update feed results
 - Describe releasing and how to recover a failed signing
+- *(impl)* Record the signing secrets being set
 
 ## [0.1.0] - 2026-11-14
 
