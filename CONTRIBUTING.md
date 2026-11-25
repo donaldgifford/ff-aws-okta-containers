@@ -97,6 +97,69 @@ Push your branch and open a PR against `main`. The PR description should:
 - Carry exactly one of the labels `major`, `minor`, `patch` or `dont-release`;
   it decides the release cut when the PR merges
 
+## Releasing
+
+Merging a pull request to `main` is what releases. The label decides how.
+
+| Label | What happens |
+| ----- | ------------ |
+| `major`, `minor`, `patch` | A new version is tagged, submitted to Mozilla for signing, and released |
+| `dont-release` | Nothing is tagged, signed or released |
+
+A release label is a submission to Mozilla, and a version number can be
+submitted only once. Use `dont-release` for anything that does not need to
+reach installed copies: documentation, tests, CI.
+
+### What the release workflow does
+
+1. **Bump Version** tags `vX.Y.Z` from the label.
+2. **Sign Extension** waits for a maintainer to approve the `amo-signing`
+   deployment on the workflow run's page. It then stages the tagged source,
+   has Mozilla sign it on the unlisted channel, and writes `updates.json`.
+3. **GitHub Release** creates the release with two files attached:
+   `ff-aws-okta-containers-X.Y.Z.xpi` and `updates.json`.
+
+Installed copies read
+`releases/latest/download/updates.json` about once a day, so a release
+reaches them without anyone doing anything.
+
+The signing credentials are secrets of the `amo-signing` environment, not
+of the repository. Only the signing job can read them, only on `main`, and
+only after approval. Never put them in a file in the checkout.
+
+### When signing fails
+
+If **Sign Extension** fails, the tag exists but no release does. Installed
+copies are unaffected: the feed still points at the previous release.
+
+First find out whether Mozilla received the upload. The job log says
+"Waiting for validation..." once it has, and the version then appears
+under the add-on in the
+[AMO developer hub](https://addons.mozilla.org/developers/addons).
+
+- **Mozilla never received it** (credentials, network, a failure before
+  the upload): fix the cause and re-run the failed job.
+- **Mozilla has the version** (the job timed out waiting, or failed
+  afterwards): re-running is refused with "Version X.Y.Z already exists".
+  Finish the release by hand once Mozilla has signed it:
+
+  ```sh
+  git checkout vX.Y.Z
+  # Download the signed file from the AMO developer hub, then:
+  mkdir -p dist
+  mv ~/Downloads/<downloaded>.xpi dist/ff-aws-okta-containers-X.Y.Z.xpi
+  just updates-json X.Y.Z
+  gh release create vX.Y.Z --title vX.Y.Z --generate-notes --verify-tag \
+    dist/ff-aws-okta-containers-X.Y.Z.xpi dist/updates.json
+  ```
+
+  `just updates-json` refuses a file that is unsigned, for another add-on,
+  or at a different version, so a wrong download cannot be published this
+  way.
+
+- **Mozilla rejected the version**: fix what it reported and merge the fix
+  with a `patch` label. The rejected number is skipped.
+
 ## License
 
 By contributing you agree that your contributions will be licensed under the
