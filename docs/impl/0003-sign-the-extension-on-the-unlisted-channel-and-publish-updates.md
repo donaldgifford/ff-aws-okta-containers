@@ -335,30 +335,30 @@ workflow-signed release.
 <!--docz:tasks:start-->
 #### Tasks
 
-- [ ] Create a GitHub environment named `amo-signing`: the author as
+- [x] Create a GitHub environment named `amo-signing`: the author as
       required reviewer, deployments limited to `main`. Done with
       `gh api`.
 - [ ] **(you)** Add `WEB_EXT_API_KEY` and `WEB_EXT_API_SECRET` as secrets
       of that environment, not of the repository:
       `gh secret set WEB_EXT_API_KEY --env amo-signing`.
-- [ ] Add a `sign` job to `.github/workflows/release.yml`, after
+- [x] Add a `sign` job to `.github/workflows/release.yml`, after
       `bump-version` and with the same condition as `release`:
       `environment: amo-signing`, `permissions: contents: read`, check
       out the tag, set up mise, run `just sign` and `just updates-json`
       with the version taken from the tag, and upload both files as one
       workflow artifact.
-- [ ] Give `sign` an approval timeout of 30 minutes and a job
+- [x] Give `sign` an approval timeout of 30 minutes and a job
       `timeout-minutes` above it. Revisit the number if phase 1 measures
       a signing anywhere near it.
-- [ ] Change the `release` job to need `sign`, download the artifact, and
+- [x] Change the `release` job to need `sign`, download the artifact, and
       pass both files to `gh release create`. It keeps
       `contents: write` and gets no signing secrets.
-- [ ] Set workflow-level `permissions` to none and grant each job only
+- [x] Set workflow-level `permissions` to none and grant each job only
       what it uses.
-- [ ] Replace the "packaging and signing are added once the extension
+- [x] Replace the "packaging and signing are added once the extension
       exists" comment at the top of the workflow with a description of
       the three jobs.
-- [ ] Add a "Releasing" section to `CONTRIBUTING.md`: what each label
+- [x] Add a "Releasing" section to `CONTRIBUTING.md`: what each label
       does now, the approval step, and what to do when signing fails or
       times out: download the signed file from the AMO developer page, run
       `just updates-json`, and create the release with
@@ -373,6 +373,22 @@ workflow-signed release.
       new version.
 
 <!--docz:tasks:end-->
+
+**Results so far (2026-11-25):**
+
+- The `amo-signing` environment exists: the author is its required
+  reviewer, self-review is allowed because there is one maintainer, and
+  `main` is the only branch that may deploy to it.
+- The workflow has three jobs with their own permissions and none at
+  workflow level. `actionlint` passes.
+- The `sign` job checks out the tag without keeping the checkout token,
+  and the two secrets are in the environment of the one step that runs
+  `just sign`.
+- The 30-minute approval timeout lives in the `sign` recipe, so a
+  hand-run and the workflow behave the same. The job's own limit is 45
+  minutes.
+- The workflow itself cannot be tried before it is merged: it runs only
+  on a push to `main`, and a real run uses up a version number.
 
 <!--docz:criteria:start-->
 #### Success Criteria
