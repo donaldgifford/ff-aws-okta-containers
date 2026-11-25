@@ -24,6 +24,7 @@ this project adheres to [Semantic Versioning](https://semver.org/).
 - Describe releasing and how to recover a failed signing
 - *(impl)* Record the signing secrets being set
 - Install from the signed release and describe updates
+- Say what updates.json is for and record the 0.2.0 install
 
 ## [0.1.0] - 2026-11-14
 
