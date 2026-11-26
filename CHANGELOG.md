@@ -10,6 +10,7 @@ this project adheres to [Semantic Versioning](https://semver.org/).
 
 - Conclude INV-0002 and complete IMPL-0003
 - Set INV-0002 to Concluded and IMPL-0003 to Completed
+- Link the open checks to their issues
 
 ## [0.2.1] - 2026-11-25
 
