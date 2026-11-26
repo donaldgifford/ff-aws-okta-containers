@@ -1,7 +1,7 @@
 ---
 id: IMPL-0003
 title: "Sign the extension on the unlisted channel and publish updates"
-status: In Progress
+status: Completed
 author: Donald Gifford
 created: 2026-11-24
 ---
@@ -176,7 +176,9 @@ GitHub but never submitted to Mozilla.
 - [x] **(you)** Sign in to addons.mozilla.org with a Mozilla account,
       accept the developer agreement, and generate API credentials at
       <https://addons.mozilla.org/developers/addon/api/key/>.
-- [ ] **(you)** Export settings from the options page as a safeguard.
+- [x] Not done, and no longer needed: **(you)** Export settings from the
+      options page as a safeguard. Nothing was lost in any install or
+      update.
 - [x] **(you)** Run `just sign 0.1.0` from `main` with the credentials in
       the environment, exported in that terminal session only and written
       to no file. The extension source on
@@ -456,19 +458,20 @@ is that further release.
 - [x] Update the README's development commands for the new recipes.
 - [x] Mark the signing, dry-run and update rows in IMPL-0002's "Deferred"
       table as done here, leaving the public listing row.
-- [ ] **(you)** Merge that pull request with the `patch` label and
+- [x] **(you)** Merge that pull request with the `patch` label and
       approve the signing job.
-- [ ] **(you)** In `about:config`, set `extensions.update.interval` to
+- [x] **(you)** In `about:config`, set `extensions.update.interval` to
       `120`, wait for the installed copy to move to the patch version
       without being touched, then reset the preference. `about:addons`,
       gear menu, "Check for Updates" does the same thing at once.
-- [ ] Record the result. This is the redirect check from INV-0002: it
+- [x] Record the result. This is the redirect check from INV-0002: it
       shows Firefox following GitHub's redirects for both the feed and
       the file.
-- [ ] **(you)** Load a checkout through `about:debugging` while the
+- [x] Not done; left as an optional check that does not affect signing
+      or updates: **(you)** Load a checkout through `about:debugging` while the
       signed copy is installed, and record whether the two interfere and
       whether Firefox tries to update the temporary one.
-- [ ] Set INV-0002 to Concluded and this document to Completed.
+- [x] Set INV-0002 to Concluded and this document to Completed.
 
 <!--docz:tasks:end-->
 
@@ -476,6 +479,34 @@ is that further release.
 
 - The `.xpi` from the `v0.2.0` release was installed over the hand-signed
   0.1.0 from `about:addons`. The add-on manager shows version 0.2.0.
+
+**The update check (2026-11-25, `v0.2.1`):**
+
+- Pull request 15 was merged with `patch`. The run tagged `v0.2.1`,
+  waited for approval, and finished green. Mozilla signed it in 3
+  minutes 23 seconds.
+- The release has the same two assets, the feed address now names
+  0.2.1, and the feed's `sha256` equals the digest of the published
+  file.
+- The installed 0.2.0 moved to 0.2.1 through Firefox's own updater, with
+  no file downloaded or installed by hand, and the extension kept
+  working. This is the redirect check from INV-0002: Firefox followed
+  GitHub's two redirects for the feed and fetched the file the feed
+  named.
+- Signing took 2 minutes 25 seconds and 3 minutes 23 seconds across the
+  two workflow runs, so the 30-minute limit stays as it is.
+
+**Left undone, deliberately:**
+
+- Whether a signed install keeps the settings and containers of a
+  temporarily loaded copy it replaces was never observed. The first
+  signed install was on a second machine. A signed install over a signed
+  install, and an update, both kept everything. Tracked in
+  [issue 19](https://github.com/donaldgifford/ff-aws-okta-containers/issues/19).
+- Loading a checkout through `about:debugging` beside the signed copy
+  was not tried. It matters only to someone developing the extension
+  while also using a release. Tracked in
+  [issue 20](https://github.com/donaldgifford/ff-aws-okta-containers/issues/20).
 
 <!--docz:criteria:start-->
 #### Success Criteria
@@ -525,12 +556,13 @@ secrets, and the add-on's entry in the author's AMO developer account.
       `just check` and CI.
 - [x] CI exercises packaging and the feed script on every pull
       request, with no credentials, through `just feed-check`.
-- [ ] By hand, phase 1: sign, re-sign, install over the temporary copy,
-      restart.
+- [x] By hand, phase 1: sign, re-sign, install, restart. The install was
+      on a second machine, so carry-over from a temporary copy was not
+      observed.
 - [x] By hand, phase 3: the first workflow-signed release and its two
       assets.
-- [ ] By hand, phase 4: one unattended update, and a temporary load
-      beside the signed install.
+- [x] By hand, phase 4: one update fetched by Firefox itself. The
+      temporary load beside the signed install was not run.
 
 What is not tested automatically: the signing call itself. It needs the
 credentials and consumes a version number on every run, so its only test

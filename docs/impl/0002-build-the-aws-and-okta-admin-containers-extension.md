@@ -43,6 +43,7 @@ created: 2026-11-13
   - [Phase 8: Daily-use build](#phase-8-daily-use-build)
     - [Tasks](#tasks-7)
     - [Success Criteria](#success-criteria-7)
+- [Open work](#open-work)
 - [Deferred](#deferred)
 - [File Changes](#file-changes)
 - [Testing Plan](#testing-plan)
@@ -617,6 +618,18 @@ use and test it. Nothing in this phase involves Mozilla.
 <!--docz:phase:end-->
 
 ---
+
+## Open work
+
+The tasks still unchecked above all need a real portal, real tenants or
+time in daily use. They are tracked as issues:
+
+- [Issue 16](https://github.com/donaldgifford/ff-aws-okta-containers/issues/16): the AWS console hand-off against a real portal
+  (phase 5).
+- [Issue 17](https://github.com/donaldgifford/ff-aws-okta-containers/issues/17): sign-in, concurrent sessions and the Okta
+  dashboard tile (phase 6).
+- [Issue 18](https://github.com/donaldgifford/ff-aws-okta-containers/issues/18): the full checklist, daily use, and the two
+  status changes (phase 8).
 
 ## Deferred
 
