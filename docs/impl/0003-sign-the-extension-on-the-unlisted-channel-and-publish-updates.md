@@ -501,10 +501,12 @@ is that further release.
 - Whether a signed install keeps the settings and containers of a
   temporarily loaded copy it replaces was never observed. The first
   signed install was on a second machine. A signed install over a signed
-  install, and an update, both kept everything.
+  install, and an update, both kept everything. Tracked in
+  [issue 19](https://github.com/donaldgifford/ff-aws-okta-containers/issues/19).
 - Loading a checkout through `about:debugging` beside the signed copy
   was not tried. It matters only to someone developing the extension
-  while also using a release.
+  while also using a release. Tracked in
+  [issue 20](https://github.com/donaldgifford/ff-aws-okta-containers/issues/20).
 
 <!--docz:criteria:start-->
 #### Success Criteria
